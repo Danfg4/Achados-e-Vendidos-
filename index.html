@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Achados & Vendidos — as melhores ofertas do Mercado Livre, direto do Instagram.">
+<meta name="description" content="Achados & Vendidos — as melhores ofertas do Mercado Livre.">
 <title>Achados & Vendidos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -80,7 +80,7 @@
   .product-card:nth-child(3n+1) { transform: rotate(0.6deg); }
   .product-card:nth-child(3n+2) { transform: rotate(-0.3deg); }
   .product-card:hover { transform: rotate(0deg) translateY(-4px); box-shadow: var(--shadow-hover); }
-  .product-image { width: 100%; height: 180px; background: linear-gradient(135deg, rgba(201,138,31,0.1) 0%, rgba(178,58,46,0.08) 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .product-image { width: 100%; height: 180px; background: linear-gradient(135deg, rgba(201,138,31,0.1) 0%, rgba(178,58,46,0.08) 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 60px; }
   .product-image img { width: 100%; height: 100%; object-fit: cover; }
   .product-info { padding: 18px; flex: 1; display: flex; flex-direction: column; }
   .product-title { font-weight: 700; font-size: 16px; margin-bottom: 8px; line-height: 1.3; }
@@ -102,11 +102,11 @@
 
   .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
   .field label { font-size: 13px; font-weight: 700; color: var(--ink-soft); }
-  .field input, .field textarea { font-family: var(--font-body); font-size: 15px; padding: 11px 13px; border-radius: 5px; border: 1.5px solid var(--line-strong); background: var(--paper-card); color: var(--ink); width: 100%; }
+  .field input, .field textarea, .field select { font-family: var(--font-body); font-size: 15px; padding: 11px 13px; border-radius: 5px; border: 1.5px solid var(--line-strong); background: var(--paper-card); color: var(--ink); width: 100%; }
   .field textarea { resize: vertical; }
-  .field input:focus, .field textarea:focus { outline: none; border-color: var(--stamp); box-shadow: 0 0 0 3px rgba(178,58,46,0.15); }
+  .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--stamp); box-shadow: 0 0 0 3px rgba(178,58,46,0.15); }
   .field-error { font-size: 12px; color: var(--stamp); display: none; }
-  .field.has-error input, .field.has-error textarea { border-color: var(--stamp); }
+  .field.has-error input, .field.has-error textarea, .field.has-error select { border-color: var(--stamp); }
   .field.has-error .field-error { display: block; }
 
   .footer { padding: 40px 0 60px; text-align: center; color: var(--ink-faint); font-size: 13px; }
@@ -118,7 +118,7 @@
 
   .modal-overlay { position: fixed; inset: 0; background: rgba(42,33,24,0.55); display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; z-index: 100; overflow-y: auto; }
   .modal-overlay[hidden] { display: none; }
-  .modal { background: var(--paper); border-radius: 12px; max-width: 640px; width: 100%; padding: 32px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.3); }
+  .modal { background: var(--paper); border-radius: 12px; max-width: 640px; width: 100%; padding: 32px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
   .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; line-height: 1; color: var(--ink-soft); padding: 6px; cursor: pointer; }
   .modal-close:hover { color: var(--ink); }
   .tabs { display: flex; gap: 4px; border-bottom: 1.5px solid var(--line); margin: 22px 0 24px; overflow-x: auto; }
@@ -139,16 +139,21 @@
   .status-rejected { color: var(--stamp); border-color: var(--stamp); background: rgba(178,58,46,0.1); }
 
   .badge { display: inline-block; background: rgba(178,58,46,0.1); color: var(--stamp); padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 700; }
-  .feature-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
-  .feature-item { display: flex; gap: 8px; align-items: flex-start; }
-  .feature-icon { flex-shrink: 0; }
+
+  .help-box { background: rgba(201,138,31,0.1); border: 1px solid rgba(201,138,31,0.3); border-radius: 8px; padding: 16px; margin-bottom: 20px; font-size: 14px; color: var(--ink-soft); }
+  .help-box strong { color: var(--ink); }
+
+  .image-preview { width: 100%; max-width: 200px; height: 150px; background: var(--paper-deep); border-radius: 8px; object-fit: cover; margin-top: 8px; }
+  .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+  .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
+  .file-input-label { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(178,58,46,0.1); border: 2px dashed var(--stamp); border-radius: 8px; cursor: pointer; font-weight: 700; color: var(--stamp); transition: all .2s; }
+  .file-input-label:hover { background: rgba(178,58,46,0.2); }
 
   @media (max-width: 640px) {
     .ad-form-grid { grid-template-columns: 1fr; }
     .modal { padding: 24px 18px; }
     .ad-panel { padding: 22px 18px; }
     .hero p { font-size: 16px; }
-    .feature-list { grid-template-columns: 1fr; }
     .tabs { gap: 2px; }
     .tab-btn { padding: 10px 12px; font-size: 12px; }
   }
@@ -168,9 +173,8 @@
       <div class="brand">Achados <span style="color:var(--stamp)">&amp;</span> Vendidos</div>
       <div class="nav-links">
         <a href="#achados">Achados</a>
-        <a href="#categorias">Categorias</a>
         <a href="#anuncie">Anuncie</a>
-        <a class="btn btn-primary btn-small" id="ig-follow-btn" href="https://instagram.com" target="_blank" rel="noopener noreferrer">Seguir</a>
+        <a class="btn btn-primary btn-small" id="ig-follow-btn" href="https://instagram.com" target="_blank" rel="noopener noreferrer">📷 Seguir</a>
       </div>
     </div>
   </nav>
@@ -179,7 +183,7 @@
     <div class="wrap">
       <span class="hero-badge">🔥 Ofertas incríveis</span>
       <h1>Achados &amp; Vendidos</h1>
-      <p>Produtos com os melhores preços do Mercado Livre. Testado, aprovado e com link direto.</p>
+      <p>Produtos com os melhores preços do Mercado Livre.</p>
       <div class="hero-ctas">
         <a href="#achados" class="btn btn-primary">Ver achados</a>
         <a id="ig-follow-btn-2" href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Seguir no Instagram →</a>
@@ -187,27 +191,13 @@
     </div>
   </header>
 
-  <section class="section" id="categorias">
-    <div class="wrap">
-      <h2>Categorias</h2>
-      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-top: 20px;">
-        <button class="btn btn-outline category-filter" data-category="todos" style="border: none; background: var(--stamp); color: var(--paper-card);">📦 Todos</button>
-        <button class="btn btn-outline category-filter" data-category="eletrônicos">💻 Eletrônicos</button>
-        <button class="btn btn-outline category-filter" data-category="moda">👕 Moda</button>
-        <button class="btn btn-outline category-filter" data-category="casa">🏠 Casa</button>
-        <button class="btn btn-outline category-filter" data-category="esportes">⚽ Esportes</button>
-        <button class="btn btn-outline category-filter" data-category="livros">📚 Livros</button>
-      </div>
-    </div>
-  </section>
-
   <section class="section" id="achados">
     <div class="wrap">
       <div class="section-head">
         <h2>Achados da semana</h2>
         <span class="count-badge" id="product-count">— achados</span>
       </div>
-      <p class="section-sub">Atualizamos diariamente com as melhores ofertas.</p>
+      <p class="section-sub">Clique em qualquer produto pra ver no Mercado Livre.</p>
       <div class="grid" id="products-grid">
         <p style="color:var(--ink-faint); grid-column:1/-1;">Carregando achados…</p>
       </div>
@@ -217,7 +207,7 @@
   <section class="section" id="sponsored-section" hidden>
     <div class="wrap">
       <div class="section-head"><h2>⭐ Patrocinado</h2></div>
-      <p class="section-sub">Escolha dos melhores vendedores.</p>
+      <p class="section-sub">Anúncios em destaque.</p>
       <div class="grid" id="sponsored-grid"></div>
     </div>
   </section>
@@ -225,80 +215,49 @@
   <section class="section" id="anuncie">
     <div class="wrap">
       <div class="section-head"><h2>Anuncie aqui</h2></div>
-      <p class="section-sub">Quer aparecer pro nosso público? Seu produto em destaque todos os dias.</p>
+      <p class="section-sub">Quer colocar seu produto em destaque? Envie uma solicitação!</p>
       
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px;">
-        <div>
-          <h3 style="font-size: 18px; margin-bottom: 16px;">Por que anunciar?</h3>
-          <div class="feature-list">
-            <div class="feature-item">
-              <span class="feature-icon">📍</span>
-              <div>
-                <strong>Alcance</strong>
-                <p style="font-size: 13px; color: var(--ink-soft); margin-top: 2px;">Centenas de pessoas vendo seu produto todo dia</p>
-              </div>
-            </div>
-            <div class="feature-item">
-              <span class="feature-icon">⚡</span>
-              <div>
-                <strong>Rápido</strong>
-                <p style="font-size: 13px; color: var(--ink-soft); margin-top: 2px;">Ativa em minutos, sem burocracias</p>
-              </div>
-            </div>
-            <div class="feature-item">
-              <span class="feature-icon">💰</span>
-              <div>
-                <strong>Econômico</strong>
-                <p style="font-size: 13px; color: var(--ink-soft); margin-top: 2px;">Investimento pequeno, retorno garantido</p>
-              </div>
-            </div>
-            <div class="feature-item">
-              <span class="feature-icon">📊</span>
-              <div>
-                <strong>Resultados</strong>
-                <p style="font-size: 13px; color: var(--ink-soft); margin-top: 2px;">Veja quantas pessoas visitaram seu anúncio</p>
-              </div>
-            </div>
-          </div>
+      <div class="ad-panel">
+        <div class="help-box">
+          <strong>💡 Como funciona:</strong> Envie seus dados abaixo. Você receberá um WhatsApp confirmando se seu anúncio foi aprovado!
         </div>
 
-        <div class="ad-panel">
-          <div class="ad-info">
-            <div class="ad-info-item"><div class="label">Valor</div><div class="value" id="ad-price-display">R$ 29,90</div></div>
-            <div class="ad-info-item"><div class="label">Duração</div><div class="value">7 dias</div></div>
-            <div class="ad-info-item"><div class="label">Contato</div><div class="value" id="ad-contact-display">—</div></div>
-          </div>
-          <form id="ad-request-form" novalidate>
-            <div class="ad-form-grid">
-              <div class="field" data-field="advertiserName">
-                <label for="ad-name">Seu nome</label>
-                <input id="ad-name" type="text" placeholder="João Silva">
-                <span class="field-error">Qual é seu nome?</span>
-              </div>
-              <div class="field" data-field="contact">
-                <label for="ad-contact">WhatsApp</label>
-                <input id="ad-contact" type="text" placeholder="(11) 9 0000-0000">
-                <span class="field-error">Preciso de um WhatsApp pra contato.</span>
-              </div>
-            </div>
-            <div class="field" data-field="url">
-              <label for="ad-url">Link do produto (Mercado Livre)</label>
-              <input id="ad-url" type="text" placeholder="https://meli.la/ABC123">
-              <span class="field-error">Link inválido. Começa com http:// ou https://</span>
-            </div>
-            <div class="field" data-field="title">
-              <label for="ad-title">Título do anúncio</label>
-              <input id="ad-title" type="text" placeholder="Iphone 13 64GB Preto - Impecável">
-              <span class="field-error">Dá um bom título!</span>
-            </div>
-            <div class="field">
-              <label for="ad-note">Descrição (opcional)</label>
-              <textarea id="ad-note" rows="3" placeholder="Ex: Raridade à venda, parcelo, troco por..."></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%;">Solicitar anúncio</button>
-          </form>
-          <div id="ad-confirmation" class="empty-state" hidden></div>
+        <div class="ad-info">
+          <div class="ad-info-item"><div class="label">💰 Valor</div><div class="value" id="ad-price-display">R$ 29,90</div></div>
+          <div class="ad-info-item"><div class="label">📅 Duração</div><div class="value">7 dias</div></div>
+          <div class="ad-info-item"><div class="label">📱 Contato</div><div class="value" id="ad-contact-display">—</div></div>
         </div>
+
+        <form id="ad-request-form" novalidate>
+          <div class="ad-form-grid">
+            <div class="field" data-field="advertiserName">
+              <label for="ad-name">✏️ Seu nome</label>
+              <input id="ad-name" type="text" placeholder="Ex: João Silva">
+              <span class="field-error">Preciso do seu nome!</span>
+            </div>
+            <div class="field" data-field="contact">
+              <label for="ad-contact">📱 Seu WhatsApp</label>
+              <input id="ad-contact" type="text" placeholder="(11) 90000-0000">
+              <span class="field-error">Preciso de um WhatsApp!</span>
+            </div>
+          </div>
+          <div class="field" data-field="url">
+            <label for="ad-url">🔗 Link do produto (Mercado Livre)</label>
+            <input id="ad-url" type="text" placeholder="https://meli.la/ABC123">
+            <span class="field-error">Link inválido! Começa com https://</span>
+          </div>
+          <div class="field" data-field="title">
+            <label for="ad-title">📝 Título do anúncio</label>
+            <input id="ad-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+            <span class="field-error">Preciso de um título!</span>
+          </div>
+          <div class="field">
+            <label for="ad-note">💬 Descrição (opcional)</label>
+            <textarea id="ad-note" rows="3" placeholder="Ex: Impecável, primeira mão..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">📤 Enviar solicitação</button>
+        </form>
+        <div id="ad-confirmation" class="empty-state" hidden></div>
       </div>
     </div>
   </section>
@@ -307,7 +266,6 @@
     <div class="wrap">
       <div>Achados &amp; Vendidos © 2026</div>
       <p style="font-size: 12px; margin-top: 8px;">Não somos afiliados do Mercado Livre. Apenas curadores de ofertas.</p>
-      <button class="btn-ghost" id="open-admin-btn" type="button" style="display: block; margin-top: 12px;">🔒 Admin</button>
     </div>
   </footer>
 
@@ -318,31 +276,31 @@
       <button class="modal-close" id="close-admin-btn" type="button">×</button>
 
       <div id="admin-login-view">
-        <h3>Painel de Administrador</h3>
-        <p class="section-sub">Digite sua senha.</p>
+        <h3>🔐 Painel do Administrador</h3>
+        <p class="section-sub">Digite a senha para acessar.</p>
         <form id="admin-login-form" novalidate style="margin-top:20px;">
           <div class="field" data-field="passcode">
             <label for="login-passcode">Senha</label>
             <input id="login-passcode" type="password" autocomplete="current-password" placeholder="••••••">
-            <span class="field-error">Digite a senha.</span>
+            <span class="field-error">Digite a senha!</span>
           </div>
           <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
         </form>
       </div>
 
       <div id="admin-setup-view" hidden>
-        <h3>Primeira vez? Crie a senha</h3>
-        <p class="section-sub">Será usada pra você acessar o painel.</p>
+        <h3>🆕 Primeira vez!</h3>
+        <p class="section-sub">Crie uma senha para proteger seu painel.</p>
         <form id="admin-setup-form" novalidate style="margin-top:20px;">
           <div class="field" data-field="newPasscode">
-            <label for="setup-passcode">Senha (min. 6 caracteres)</label>
+            <label for="setup-passcode">Sua senha (mínimo 4 caracteres)</label>
             <input id="setup-passcode" type="password" autocomplete="new-password" placeholder="••••••">
-            <span class="field-error">Precisa ter 6+ caracteres.</span>
+            <span class="field-error">Use 4+ caracteres!</span>
           </div>
           <div class="field" data-field="confirmPasscode">
-            <label for="setup-passcode-confirm">Confirmar</label>
+            <label for="setup-passcode-confirm">Confirme a senha</label>
             <input id="setup-passcode-confirm" type="password" autocomplete="new-password" placeholder="••••••">
-            <span class="field-error">Senhas não conferem.</span>
+            <span class="field-error">As senhas não são iguais!</span>
           </div>
           <button type="submit" class="btn btn-primary" style="width: 100%;">Criar e entrar</button>
         </form>
@@ -350,81 +308,73 @@
 
       <div id="admin-panel-view" hidden>
         <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 20px;">
-          <h3 style="font-size:20px; margin: 0;">Painel Admin</h3>
+          <h3 style="font-size:20px; margin: 0;">🎛️ Painel Admin</h3>
           <button class="btn-ghost" id="admin-logout-btn" type="button">Sair</button>
         </div>
         <div class="tabs">
-          <button class="tab-btn active" data-tab="products" type="button">Produtos (×<span id="count-products">0</span>)</button>
-          <button class="tab-btn" data-tab="ads" type="button">Pedidos (×<span id="count-ads">0</span>)</button>
+          <button class="tab-btn active" data-tab="products" type="button">📦 Produtos</button>
+          <button class="tab-btn" data-tab="ads" type="button">⭐ Anúncios</button>
           <button class="tab-btn" data-tab="settings" type="button">⚙️ Config</button>
         </div>
 
         <div class="tab-panel" data-tab-panel="products">
-          <form id="add-product-form" novalidate>
-            <h4 style="margin-bottom: 14px;">Adicionar novo produto</h4>
+          <div class="help-box">
+            <strong>💡 Dica:</strong> Cole o link do Mercado Livre, dê um nome e escolha uma foto. Pronto!
+          </div>
+
+          <form id="add-product-form" novalidate style="background: rgba(47,107,79,0.05); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+            <h4 style="margin-bottom: 14px;">➕ Adicionar novo produto</h4>
             <div class="field" data-field="url">
-              <label for="new-product-url">Link Mercado Livre</label>
+              <label for="new-product-url">🔗 Link do Mercado Livre</label>
               <input id="new-product-url" type="text" placeholder="https://meli.la/...">
-              <span class="field-error">Link inválido.</span>
+              <span class="field-error">Link inválido!</span>
             </div>
-            <div class="ad-form-grid">
-              <div class="field" data-field="title">
-                <label for="new-product-title">Título</label>
-                <input id="new-product-title" type="text" placeholder="Nome do produto">
-                <span class="field-error">Precisa de título.</span>
-              </div>
-              <div class="field" data-field="category">
-                <label for="new-product-category">Categoria</label>
-                <select id="new-product-category" style="font-family: var(--font-body); font-size: 15px; padding: 11px 13px; border-radius: 5px; border: 1.5px solid var(--line-strong); background: var(--paper-card); color: var(--ink); width: 100%;">
-                  <option value="eletrônicos">💻 Eletrônicos</option>
-                  <option value="moda">👕 Moda</option>
-                  <option value="casa">🏠 Casa</option>
-                  <option value="esportes">⚽ Esportes</option>
-                  <option value="livros">📚 Livros</option>
-                </select>
-              </div>
-            </div>
-            <div class="ad-form-grid">
-              <div class="field">
-                <label for="new-product-price">Preço (opcional)</label>
-                <input id="new-product-price" type="text" placeholder="R$ 99,90">
-              </div>
-              <div class="field">
-                <label for="new-product-note">Observação</label>
-                <input id="new-product-note" type="text" placeholder="Ex: Última unidade em estoque">
-              </div>
+            <div class="field" data-field="title">
+              <label for="new-product-title">📝 Nome do produto</label>
+              <input id="new-product-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+              <span class="field-error">Precisa de um nome!</span>
             </div>
             <div class="field">
-              <label for="new-product-image">URL da imagem</label>
-              <input id="new-product-image" type="text" placeholder="https://...">
+              <label for="new-product-image">📸 Foto do produto</label>
+              <div class="file-input-wrapper">
+                <input id="new-product-image" type="file" accept="image/*" onchange="previewImage(event, 'image-preview-new')">
+                <label for="new-product-image" class="file-input-label">
+                  📷 Clique aqui e escolha uma foto do celular
+                </label>
+              </div>
+              <img id="image-preview-new" class="image-preview" hidden>
             </div>
             <button type="submit" class="btn btn-primary" style="width: 100%;">➕ Adicionar</button>
           </form>
-          <div style="margin-top:24px;" id="admin-products-list"></div>
+
+          <h4 style="margin-bottom: 14px;">Seus produtos:</h4>
+          <div id="admin-products-list"></div>
         </div>
 
         <div class="tab-panel" data-tab-panel="ads" hidden>
+          <div class="help-box">
+            <strong>💡 Aqui aparecem</strong> as solicitações de anúncios que chegam. Aprove ou rejeite quando quiser!
+          </div>
           <div id="admin-ads-list"></div>
         </div>
 
         <div class="tab-panel" data-tab-panel="settings" hidden>
-          <h4 style="margin-bottom: 16px;">Configurações do site</h4>
-          <form id="settings-form" novalidate>
+          <div class="help-box">
+            <strong>⚙️ Configurações gerais</strong> do seu site. Coloque seu Instagram e WhatsApp!
+          </div>
+
+          <form id="settings-form" novalidate style="background: rgba(201,138,31,0.05); padding: 16px; border-radius: 8px;">
             <div class="field">
-              <label for="settings-instagram">Link Instagram</label>
+              <label for="settings-instagram">📷 Link do seu Instagram</label>
               <input id="settings-instagram" type="text" placeholder="https://instagram.com/seu.perfil">
             </div>
             <div class="field">
-              <label for="settings-price">Preço anúncio (R$)</label>
-              <input id="settings-price" type="text" placeholder="29.90">
-            </div>
-            <div class="field">
-              <label for="settings-contact">Seu WhatsApp</label>
+              <label for="settings-contact">📱 Seu WhatsApp (para anúncios)</label>
               <input id="settings-contact" type="text" placeholder="(11) 90000-0000">
             </div>
             <div class="field">
-              <label for="settings-title">Slogan/Subtítulo</label>
-              <input id="settings-title" type="text" placeholder="Ofertas incríveis do Mercado Livre">
+              <label for="settings-price">💰 Preço do anúncio em R$</label>
+              <input id="settings-price" type="text" placeholder="29.90">
             </div>
             <button type="submit" class="btn btn-primary" style="width: 100%;">💾 Salvar</button>
           </form>
@@ -434,26 +384,27 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'achados-vendidos-data-v3';
-    const ADMIN_KEY = 'achados-vendidos-admin-v3';
+    const STORAGE_KEY = 'achados-vendidos-data-secure';
+    const ADMIN_KEY = 'achados-vendidos-admin-secure';
+    const ADMIN_UNLOCK_KEY = 'admin-securetoken-xyz789abc';
 
     function loadData() {
       const data = localStorage.getItem(STORAGE_KEY);
       return data ? JSON.parse(data) : { 
         products: [
-          { url: 'https://meli.la/2DQ5Set', title: 'Produto 1', category: 'eletrônicos', price: '', note: '', image: null },
-          { url: 'https://meli.la/1SobzQc', title: 'Produto 2', category: 'eletrônicos', price: '', note: '', image: null },
-          { url: 'https://meli.la/2DvbM2x', title: 'Produto 3', category: 'moda', price: '', note: '', image: null },
-          { url: 'https://meli.la/1xGEd2y', title: 'Produto 4', category: 'casa', price: '', note: '', image: null },
-          { url: 'https://meli.la/1UrHuur', title: 'Produto 5', category: 'esportes', price: '', note: '', image: null },
-          { url: 'https://meli.la/1WsQcX9', title: 'Produto 6', category: 'eletrônicos', price: '', note: '', image: null },
-          { url: 'https://meli.la/16ERb19', title: 'Produto 7', category: 'livros', price: '', note: '', image: null },
-          { url: 'https://meli.la/2W1Qa29', title: 'Produto 8', category: 'moda', price: '', note: '', image: null },
-          { url: 'https://meli.la/1XzB9wb', title: 'Produto 9', category: 'casa', price: '', note: '', image: null },
-          { url: 'https://meli.la/31Do25n', title: 'Produto 10', category: 'eletrônicos', price: '', note: '', image: null }
+          { url: 'https://meli.la/2DQ5Set', title: 'Produto 1', image: null },
+          { url: 'https://meli.la/1SobzQc', title: 'Produto 2', image: null },
+          { url: 'https://meli.la/2DvbM2x', title: 'Produto 3', image: null },
+          { url: 'https://meli.la/1xGEd2y', title: 'Produto 4', image: null },
+          { url: 'https://meli.la/1UrHuur', title: 'Produto 5', image: null },
+          { url: 'https://meli.la/1WsQcX9', title: 'Produto 6', image: null },
+          { url: 'https://meli.la/16ERb19', title: 'Produto 7', image: null },
+          { url: 'https://meli.la/2W1Qa29', title: 'Produto 8', image: null },
+          { url: 'https://meli.la/1XzB9wb', title: 'Produto 9', image: null },
+          { url: 'https://meli.la/31Do25n', title: 'Produto 10', image: null }
         ], 
         ads: [], 
-        settings: { instagram: 'https://instagram.com', price: '29.90', contact: '', title: 'Ofertas incríveis' }
+        settings: { instagram: 'https://instagram.com', contact: '', price: '29.90' }
       };
     }
 
@@ -470,7 +421,21 @@
     }
 
     let isAdminLoggedIn = false;
-    let selectedCategory = 'todos';
+    let currentProductImage = null;
+
+    function previewImage(event, previewId) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = document.getElementById(previewId);
+          img.src = e.target.result;
+          img.hidden = false;
+          currentProductImage = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
 
     function showToast(message, isError = false) {
       const toast = document.getElementById('toast');
@@ -500,12 +465,10 @@
         if (fieldName === 'url') {
           hasError = !isValidUrl(input.value);
         } else if (fieldName === 'newPasscode') {
-          hasError = input.value.length < 6;
+          hasError = input.value.length < 4;
         } else if (fieldName === 'confirmPasscode') {
           const newPasscode = form.querySelector('[data-field="newPasscode"] input').value;
           hasError = input.value !== newPasscode;
-        } else if (fieldName === 'category') {
-          hasError = !input.value.trim();
         } else {
           hasError = !input.value.trim();
         }
@@ -521,26 +484,20 @@
       const grid = document.getElementById('products-grid');
       const count = document.getElementById('product-count');
 
-      const filtered = selectedCategory === 'todos' 
-        ? data.products 
-        : data.products.filter(p => p.category === selectedCategory);
+      count.textContent = `${data.products.length} achados`;
 
-      count.textContent = `${filtered.length} ${filtered.length === 1 ? 'achado' : 'achados'}`;
-
-      if (filtered.length === 0) {
-        grid.innerHTML = '<p style="color:var(--ink-faint); grid-column:1/-1; text-align: center;">Nenhum achado nesta categoria. Volte em breve!</p>';
+      if (data.products.length === 0) {
+        grid.innerHTML = '<p style="color:var(--ink-faint); grid-column:1/-1; text-align: center;">Nenhum achado por enquanto. Volte em breve!</p>';
         return;
       }
 
-      grid.innerHTML = filtered.map((product, idx) => `
+      grid.innerHTML = data.products.map((product) => `
         <div class="product-card">
           <div class="product-image">
             ${product.image ? `<img src="${product.image}" alt="${product.title}">` : '📦'}
           </div>
           <div class="product-info">
             <div class="product-title">${product.title}</div>
-            ${product.price ? `<div class="product-price">${product.price}</div>` : ''}
-            ${product.note ? `<div class="product-note">${product.note}</div>` : ''}
             <div class="product-footer">
               <a href="${product.url}" target="_blank" rel="noopener noreferrer">Ver oferta →</a>
             </div>
@@ -569,8 +526,6 @@
           </div>
           <div class="product-info">
             <div class="product-title">${ad.title}</div>
-            ${ad.price ? `<div class="product-price">${ad.price}</div>` : ''}
-            ${ad.note ? `<div class="product-note">${ad.note}</div>` : ''}
             <div class="product-footer">
               <a href="${ad.url}" target="_blank" rel="noopener noreferrer">Ver produto →</a>
             </div>
@@ -582,7 +537,6 @@
     function renderAdList() {
       const data = loadData();
       const list = document.getElementById('admin-ads-list');
-      document.getElementById('count-ads').textContent = data.ads.length;
 
       if (data.ads.length === 0) {
         list.innerHTML = '<div class="empty-state">📭 Nenhuma solicitação ainda.</div>';
@@ -593,9 +547,10 @@
         <div class="admin-row">
           <div class="admin-row-main">
             <div style="font-weight: 700; margin-bottom: 4px;">${ad.title} <span class="status-stamp status-${ad.status}">${ad.status === 'pending' ? 'Pendente' : ad.status === 'approved' ? 'Aprovado' : 'Rejeitado'}</span></div>
-            <div style="font-size: 13px; color: var(--ink-soft); margin-bottom: 6px;"><strong>${ad.advertiserName}</strong> • ${ad.contact}</div>
+            <div style="font-size: 13px; color: var(--ink-soft); margin-bottom: 4px;"><strong>${ad.advertiserName}</strong></div>
+            <div style="font-size: 13px; color: var(--ink-soft); margin-bottom: 4px;">WhatsApp: ${ad.contact}</div>
             <div style="font-size: 13px; color: var(--ink-soft); word-break: break-all;"><a href="${ad.url}" target="_blank" style="color: var(--stamp);">Ver anúncio →</a></div>
-            ${ad.note ? `<div style="font-size: 13px; color: var(--ink-soft); margin-top: 6px;">💬 ${ad.note}</div>` : ''}
+            ${ad.note ? `<div style="font-size: 13px; color: var(--ink-soft); margin-top: 6px;">📝 ${ad.note}</div>` : ''}
           </div>
           <div class="admin-row-actions">
             ${ad.status === 'pending' ? `
@@ -640,7 +595,6 @@
     function renderProductList() {
       const data = loadData();
       const list = document.getElementById('admin-products-list');
-      document.getElementById('count-products').textContent = data.products.length;
 
       if (data.products.length === 0) {
         list.innerHTML = '<div class="empty-state">📦 Nenhum produto adicionado.</div>';
@@ -651,12 +605,8 @@
         <div class="admin-row">
           <div class="admin-row-main">
             <div style="font-weight: 700; margin-bottom: 4px;">${product.title}</div>
-            <div style="font-size: 12px; color: var(--ink-soft); margin-bottom: 4px;">
-              <span class="badge">${product.category}</span>
-              ${product.price ? ` • ${product.price}` : ''}
-            </div>
+            ${product.image ? `<img src="${product.image}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">` : ''}
             <div style="font-size: 13px; color: var(--ink-soft); word-break: break-all;"><a href="${product.url}" target="_blank" style="color: var(--stamp);">Ver no Mercado Livre →</a></div>
-            ${product.note ? `<div style="font-size: 13px; color: var(--ink-soft); margin-top: 4px;">📝 ${product.note}</div>` : ''}
           </div>
           <div class="admin-row-actions">
             <button class="icon-btn danger" onclick="deleteProduct(${idx})">🗑</button>
@@ -679,9 +629,8 @@
     function loadSettings() {
       const data = loadData();
       document.getElementById('settings-instagram').value = data.settings.instagram || '';
-      document.getElementById('settings-price').value = data.settings.price || '29.90';
       document.getElementById('settings-contact').value = data.settings.contact || '';
-      document.getElementById('settings-title').value = data.settings.title || '';
+      document.getElementById('settings-price').value = data.settings.price || '29.90';
       updateAdInfo();
     }
 
@@ -729,7 +678,7 @@
       if (passcode === getAdminPasscode()) {
         showAdminPanel();
       } else {
-        showToast('Senha incorreta.', true);
+        showToast('Senha incorreta!', true);
       }
     });
 
@@ -739,7 +688,7 @@
       const passcode = document.getElementById('setup-passcode').value;
       setAdminPasscode(passcode);
       showAdminPanel();
-      showToast('✓ Senha criada!');
+      showToast('✓ Senha criada com sucesso!');
     });
 
     document.getElementById('add-product-form').addEventListener('submit', (e) => {
@@ -748,18 +697,17 @@
 
       const url = document.getElementById('new-product-url').value;
       const title = document.getElementById('new-product-title').value;
-      const category = document.getElementById('new-product-category').value;
-      const price = document.getElementById('new-product-price').value;
-      const note = document.getElementById('new-product-note').value;
-      const image = document.getElementById('new-product-image').value;
+      const image = currentProductImage;
 
       const data = loadData();
-      data.products.push({ url, title, category, price, note, image });
+      data.products.push({ url, title, image });
       saveData(data);
       document.getElementById('add-product-form').reset();
+      document.getElementById('image-preview-new').hidden = true;
+      currentProductImage = null;
       renderProductList();
       renderProducts();
-      showToast('✓ Produto adicionado!');
+      showToast('✓ Produto adicionado! Recarregue pra ver.');
     });
 
     document.getElementById('ad-request-form').addEventListener('submit', (e) => {
@@ -783,8 +731,8 @@
       document.getElementById('ad-request-form').hidden = true;
       document.getElementById('ad-confirmation').hidden = false;
       document.getElementById('ad-confirmation').innerHTML = `
-        <p style="margin-bottom: 12px;">✓ Solicitação recebida!</p>
-        <p style="font-size: 13px; color: var(--ink-soft);">Você receberá um retorno em breve no WhatsApp informado.</p>
+        <p style="margin-bottom: 12px; font-size: 16px;">✓ Pronto!</p>
+        <p style="font-size: 14px;">Sua solicitação foi enviada! Você receberá um WhatsApp confirmando em breve.</p>
       `;
 
       setTimeout(() => {
@@ -799,69 +747,13 @@
       const data = loadData();
       data.settings = {
         instagram: document.getElementById('settings-instagram').value,
-        price: document.getElementById('settings-price').value,
         contact: document.getElementById('settings-contact').value,
-        title: document.getElementById('settings-title').value
+        price: document.getElementById('settings-price').value
       };
       saveData(data);
       updateAdInfo();
-      renderProducts();
       updateInstagramLink();
       showToast('✓ Configurações salvas!');
-    });
-
-    // MODAL
-    document.getElementById('open-admin-btn').addEventListener('click', () => {
-      document.getElementById('admin-overlay').hidden = false;
-      if (checkAdminSetup()) {
-        showAdminLogin();
-      } else {
-        showAdminSetup();
-      }
-    });
-
-    document.getElementById('close-admin-btn').addEventListener('click', () => {
-      document.getElementById('admin-overlay').hidden = true;
-      hideAdminPanel();
-    });
-
-    document.getElementById('admin-overlay').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('admin-overlay')) {
-        document.getElementById('admin-overlay').hidden = true;
-        hideAdminPanel();
-      }
-    });
-
-    document.getElementById('admin-logout-btn').addEventListener('click', () => {
-      hideAdminPanel();
-      showAdminLogin();
-    });
-
-    // TABS
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tabName = btn.dataset.tab;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('[data-tab-panel]').forEach(p => p.hidden = true);
-        btn.classList.add('active');
-        document.querySelector(`[data-tab-panel="${tabName}"]`).hidden = false;
-      });
-    });
-
-    // CATEGORIES
-    document.querySelectorAll('.category-filter').forEach(btn => {
-      btn.addEventListener('click', () => {
-        selectedCategory = btn.dataset.category;
-        document.querySelectorAll('.category-filter').forEach(b => {
-          b.style.borderColor = 'var(--ink)';
-          b.style.color = 'var(--ink)';
-          b.style.background = 'transparent';
-        });
-        btn.style.background = 'var(--stamp)';
-        btn.style.color = 'var(--paper-card)';
-        btn.style.borderColor = 'var(--stamp)';
-        renderProducts();
-      });
     });
 
     // INSTAGRAM
@@ -872,12 +764,26 @@
       document.getElementById('ig-follow-btn-2').href = igLink;
     }
 
+    // CHECK URL PARA ADMIN SECRETO
+    function checkAdminUrl() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('admin') === ADMIN_UNLOCK_KEY) {
+        document.getElementById('admin-overlay').hidden = false;
+        if (checkAdminSetup()) {
+          showAdminLogin();
+        } else {
+          showAdminSetup();
+        }
+      }
+    }
+
     // INIT
     document.addEventListener('DOMContentLoaded', () => {
       renderProducts();
       renderSponsored();
       updateInstagramLink();
       updateAdInfo();
+      checkAdminUrl();
     });
   </script>
 
