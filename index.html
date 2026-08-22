@@ -55,12 +55,14 @@
   .nav-links a:not(.btn) { text-decoration: none; font-size: 14px; font-weight: 700; color: var(--ink-soft); }
   .nav-links a:not(.btn):hover { color: var(--ink); }
 
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; border-radius: 999px; font-weight: 700; font-size: 14px; border: 1.5px solid transparent; text-decoration: none; transition: background .15s ease, color .15s ease, border-color .15s ease; cursor: pointer; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; border-radius: 999px; font-weight: 700; font-size: 14px; border: 1.5px solid transparent; text-decoration: none; transition: background .15s ease, color .15s ease, border-color .15s ease; }
   .btn-primary { background: var(--stamp); color: var(--paper-card); }
   .btn-primary:hover { background: var(--stamp-deep); }
   .btn-outline { background: transparent; border-color: var(--ink); color: var(--ink); }
   .btn-outline:hover { background: var(--ink); color: var(--paper); }
   .btn-small { padding: 8px 16px; font-size: 12px; }
+  .btn-ghost { background: none; border: none; color: var(--ink-soft); text-decoration: underline; padding: 6px; font-weight: 700; font-size: 13px; cursor: pointer; }
+  .btn-ghost:hover { color: var(--ink); }
 
   .hero { padding: 72px 0 52px; text-align: center; }
   .hero-badge { display: inline-block; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-deep); background: rgba(201,138,31,0.14); border: 1px solid rgba(201,138,31,0.45); padding: 6px 14px; border-radius: 999px; margin-bottom: 22px; }
@@ -75,19 +77,19 @@
   .section-sub { color: var(--ink-soft); margin-top: 8px; max-width: 560px; }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 22px; margin-top: 28px; }
-  .product-card { position: relative; background: var(--paper-card); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-card); transition: transform .22s ease, box-shadow .22s ease; display: flex; flex-direction: column; }
+  .product-card { position: relative; background: var(--paper-card); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-card); transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
   .product-card:nth-child(3n) { transform: rotate(-1deg); }
   .product-card:nth-child(3n+1) { transform: rotate(0.6deg); }
   .product-card:nth-child(3n+2) { transform: rotate(-0.3deg); }
   .product-card:hover { transform: rotate(0deg) translateY(-4px); box-shadow: var(--shadow-hover); }
-  .product-image { width: 100%; height: 180px; background: linear-gradient(135deg, rgba(201,138,31,0.1) 0%, rgba(178,58,46,0.08) 100%); display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 60px; }
+  .product-image { width: 100%; height: 180px; background: linear-gradient(135deg, rgba(201,138,31,0.1) 0%, rgba(178,58,46,0.08) 100%); display: flex; align-items: center; justify-content: center; font-size: 48px; }
   .product-image img { width: 100%; height: 100%; object-fit: cover; }
   .product-info { padding: 18px; flex: 1; display: flex; flex-direction: column; }
   .product-title { font-weight: 700; font-size: 16px; margin-bottom: 8px; line-height: 1.3; }
   .product-note { font-size: 13px; color: var(--ink-soft); margin-bottom: 12px; }
   .product-price { font-weight: 700; color: var(--stamp); margin-bottom: 8px; }
   .product-footer { display: flex; gap: 8px; margin-top: auto; }
-  .product-link a { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; font-size: 12px; color: var(--paper-card); background: var(--stamp); padding: 10px 12px; border-radius: 5px; text-decoration: none; width: 100%; transition: background .15s ease; border: none; }
+  .product-link a { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; font-size: 12px; color: var(--paper-card); background: var(--stamp); padding: 10px 16px; border-radius: 5px; text-decoration: none; transition: background .15s ease; }
   .product-link a:hover { background: var(--stamp-deep); }
   
   .sponsor-badge { position: absolute; top: -9px; right: 12px; background: var(--gold); color: #2A1D06; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; transform: rotate(2deg); box-shadow: 0 2px 5px rgba(0,0,0,0.18); }
@@ -130,7 +132,7 @@
   .admin-row:last-child { border-bottom: none; }
   .admin-row-main { flex: 1; min-width: 0; }
   .admin-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
-  .icon-btn { background: none; border: 1px solid var(--line-strong); border-radius: 5px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); flex-shrink: 0; cursor: pointer; font-size: 14px; }
+  .icon-btn { background: none; border: 1px solid var(--line-strong); border-radius: 5px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); flex-shrink: 0; cursor: pointer; }
   .icon-btn:hover { background: var(--paper-deep); }
   .icon-btn.danger:hover { background: var(--stamp); color: #fff; border-color: var(--stamp); }
   .status-stamp { display: inline-block; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 3px; border: 1.5px solid; transform: rotate(-2deg); text-transform: uppercase; }
@@ -146,7 +148,7 @@
   .image-preview { width: 100%; max-width: 200px; height: 150px; background: var(--paper-deep); border-radius: 8px; object-fit: cover; margin-top: 8px; }
   .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
   .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
-  .file-input-label { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(178,58,46,0.1); border: 2px dashed var(--stamp); border-radius: 8px; cursor: pointer; font-weight: 700; color: var(--stamp); transition: all .2s; }
+  .file-input-label { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(178,58,46,0.1); border: 2px dashed var(--stamp); border-radius: 8px; cursor: pointer; transition: background .15s ease; }
   .file-input-label:hover { background: rgba(178,58,46,0.2); }
 
   @media (max-width: 640px) {
@@ -266,6 +268,7 @@
     <div class="wrap">
       <div>Achados &amp; Vendidos © 2026</div>
       <p style="font-size: 12px; margin-top: 8px;">Não somos afiliados do Mercado Livre. Apenas curadores de ofertas.</p>
+      <button class="btn-ghost" id="open-admin-btn" type="button" style="margin-top: 12px;">🔐 Painel Admin</button>
     </div>
   </footer>
 
@@ -386,7 +389,6 @@
   <script>
     const STORAGE_KEY = 'achados-vendidos-data-secure';
     const ADMIN_KEY = 'achados-vendidos-admin-secure';
-    const ADMIN_UNLOCK_KEY = 'admin-securetoken-xyz789abc';
 
     function loadData() {
       const data = localStorage.getItem(STORAGE_KEY);
@@ -670,6 +672,39 @@
       document.getElementById('login-passcode').value = '';
     }
 
+    // TAB SWITCHING
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const tabName = e.target.dataset.tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.hidden = true);
+        e.target.classList.add('active');
+        document.querySelector(`[data-tab-panel="${tabName}"]`).hidden = false;
+      });
+    });
+
+    // ADMIN MODAL
+    document.getElementById('open-admin-btn').addEventListener('click', () => {
+      document.getElementById('admin-overlay').hidden = false;
+      if (checkAdminSetup()) {
+        showAdminLogin();
+      } else {
+        showAdminSetup();
+      }
+    });
+
+    document.getElementById('close-admin-btn').addEventListener('click', () => {
+      document.getElementById('admin-overlay').hidden = true;
+      hideAdminPanel();
+    });
+
+    document.getElementById('admin-overlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('admin-overlay')) {
+        document.getElementById('admin-overlay').hidden = true;
+        hideAdminPanel();
+      }
+    });
+
     // FORMS
     document.getElementById('admin-login-form').addEventListener('submit', (e) => {
       e.preventDefault();
@@ -756,6 +791,12 @@
       showToast('✓ Configurações salvas!');
     });
 
+    document.getElementById('admin-logout-btn').addEventListener('click', () => {
+      document.getElementById('admin-overlay').hidden = true;
+      hideAdminPanel();
+      showToast('👋 Até logo!');
+    });
+
     // INSTAGRAM
     function updateInstagramLink() {
       const data = loadData();
@@ -764,26 +805,12 @@
       document.getElementById('ig-follow-btn-2').href = igLink;
     }
 
-    // CHECK URL PARA ADMIN SECRETO
-    function checkAdminUrl() {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('admin') === ADMIN_UNLOCK_KEY) {
-        document.getElementById('admin-overlay').hidden = false;
-        if (checkAdminSetup()) {
-          showAdminLogin();
-        } else {
-          showAdminSetup();
-        }
-      }
-    }
-
     // INIT
     document.addEventListener('DOMContentLoaded', () => {
       renderProducts();
       renderSponsored();
       updateInstagramLink();
       updateAdInfo();
-      checkAdminUrl();
     });
   </script>
 
