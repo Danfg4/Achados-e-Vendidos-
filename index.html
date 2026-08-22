@@ -291,24 +291,6 @@
         </form>
       </div>
 
-      <div id="admin-setup-view" hidden>
-        <h3>🆕 Primeira vez!</h3>
-        <p class="section-sub">Crie uma senha para proteger seu painel.</p>
-        <form id="admin-setup-form" novalidate style="margin-top:20px;">
-          <div class="field" data-field="newPasscode">
-            <label for="setup-passcode">Sua senha (mínimo 4 caracteres)</label>
-            <input id="setup-passcode" type="password" autocomplete="new-password" placeholder="••••••">
-            <span class="field-error">Use 4+ caracteres!</span>
-          </div>
-          <div class="field" data-field="confirmPasscode">
-            <label for="setup-passcode-confirm">Confirme a senha</label>
-            <input id="setup-passcode-confirm" type="password" autocomplete="new-password" placeholder="••••••">
-            <span class="field-error">As senhas não são iguais!</span>
-          </div>
-          <button type="submit" class="btn btn-primary" style="width: 100%;">Criar e entrar</button>
-        </form>
-      </div>
-
       <div id="admin-panel-view" hidden>
         <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 20px;">
           <h3 style="font-size:20px; margin: 0;">🎛️ Painel Admin</h3>
@@ -388,7 +370,7 @@
 
   <script>
     const STORAGE_KEY = 'achados-vendidos-data-secure';
-    const ADMIN_KEY = 'achados-vendidos-admin-secure';
+    const ADMIN_PASSWORD = 'jacare61';
 
     function loadData() {
       const data = localStorage.getItem(STORAGE_KEY);
@@ -412,14 +394,6 @@
 
     function saveData(data) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
-
-    function getAdminPasscode() {
-      return localStorage.getItem(ADMIN_KEY);
-    }
-
-    function setAdminPasscode(passcode) {
-      localStorage.setItem(ADMIN_KEY, passcode);
     }
 
     let isAdminLoggedIn = false;
@@ -466,11 +440,8 @@
 
         if (fieldName === 'url') {
           hasError = !isValidUrl(input.value);
-        } else if (fieldName === 'newPasscode') {
-          hasError = input.value.length < 4;
-        } else if (fieldName === 'confirmPasscode') {
-          const newPasscode = form.querySelector('[data-field="newPasscode"] input').value;
-          hasError = input.value !== newPasscode;
+        } else if (fieldName === 'passcode') {
+          hasError = !input.value.trim();
         } else {
           hasError = !input.value.trim();
         }
@@ -642,23 +613,8 @@
       document.getElementById('ad-contact-display').textContent = data.settings.contact || '—';
     }
 
-    function checkAdminSetup() {
-      return getAdminPasscode() !== null;
-    }
-
-    function showAdminSetup() {
-      document.getElementById('admin-login-view').hidden = true;
-      document.getElementById('admin-setup-view').hidden = false;
-    }
-
-    function showAdminLogin() {
-      document.getElementById('admin-login-view').hidden = false;
-      document.getElementById('admin-setup-view').hidden = true;
-    }
-
     function showAdminPanel() {
       document.getElementById('admin-login-view').hidden = true;
-      document.getElementById('admin-setup-view').hidden = true;
       document.getElementById('admin-panel-view').hidden = false;
       isAdminLoggedIn = true;
       loadSettings();
@@ -686,11 +642,7 @@
     // ADMIN MODAL
     document.getElementById('open-admin-btn').addEventListener('click', () => {
       document.getElementById('admin-overlay').hidden = false;
-      if (checkAdminSetup()) {
-        showAdminLogin();
-      } else {
-        showAdminSetup();
-      }
+      document.getElementById('admin-login-view').hidden = false;
     });
 
     document.getElementById('close-admin-btn').addEventListener('click', () => {
@@ -710,20 +662,13 @@
       e.preventDefault();
       if (!validateForm('admin-login-form')) return;
       const passcode = document.getElementById('login-passcode').value;
-      if (passcode === getAdminPasscode()) {
+      if (passcode === ADMIN_PASSWORD) {
         showAdminPanel();
+        showToast('✓ Bem-vindo ao painel!');
       } else {
-        showToast('Senha incorreta!', true);
+        showToast('❌ Senha incorreta!', true);
+        document.getElementById('login-passcode').value = '';
       }
-    });
-
-    document.getElementById('admin-setup-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!validateForm('admin-setup-form')) return;
-      const passcode = document.getElementById('setup-passcode').value;
-      setAdminPasscode(passcode);
-      showAdminPanel();
-      showToast('✓ Senha criada com sucesso!');
     });
 
     document.getElementById('add-product-form').addEventListener('submit', (e) => {
@@ -742,7 +687,7 @@
       currentProductImage = null;
       renderProductList();
       renderProducts();
-      showToast('✓ Produto adicionado! Recarregue pra ver.');
+      showToast('✓ Produto adicionado!');
     });
 
     document.getElementById('ad-request-form').addEventListener('submit', (e) => {
