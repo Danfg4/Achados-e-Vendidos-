@@ -1,0 +1,22 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Logs
+*.log
+npm-debug.log
+
+# Optional build files
+node_modules/
+dist/
+build/
+
+# Environment
+.env
+.env.local
