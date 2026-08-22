@@ -55,7 +55,7 @@
   .nav-links a:not(.btn) { text-decoration: none; font-size: 14px; font-weight: 700; color: var(--ink-soft); }
   .nav-links a:not(.btn):hover { color: var(--ink); }
 
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; border-radius: 999px; font-weight: 700; font-size: 14px; border: 1.5px solid transparent; text-decoration: none; transition: background .15s ease, color .15s ease, border-color .15s ease; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; border-radius: 999px; font-weight: 700; font-size: 14px; border: 1.5px solid transparent; text-decoration: none; transition: background .15s ease, color .15s ease, border-color .15s ease; cursor: pointer; }
   .btn-primary { background: var(--stamp); color: var(--paper-card); }
   .btn-primary:hover { background: var(--stamp-deep); }
   .btn-outline { background: transparent; border-color: var(--ink); color: var(--ink); }
@@ -119,10 +119,10 @@
   .modal-overlay { position: fixed; inset: 0; background: rgba(42,33,24,0.55); display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; z-index: 100; overflow-y: auto; }
   .modal-overlay[hidden] { display: none; }
   .modal { background: var(--paper); border-radius: 12px; max-width: 640px; width: 100%; padding: 32px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.3); }
-  .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; line-height: 1; color: var(--ink-soft); padding: 6px; }
+  .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; line-height: 1; color: var(--ink-soft); padding: 6px; cursor: pointer; }
   .modal-close:hover { color: var(--ink); }
   .tabs { display: flex; gap: 4px; border-bottom: 1.5px solid var(--line); margin: 22px 0 24px; overflow-x: auto; }
-  .tab-btn { background: none; border: none; padding: 10px 16px; font-weight: 700; font-size: 14px; color: var(--ink-faint); border-bottom: 2px solid transparent; margin-bottom: -1.5px; white-space: nowrap; }
+  .tab-btn { background: none; border: none; padding: 10px 16px; font-weight: 700; font-size: 14px; color: var(--ink-faint); border-bottom: 2px solid transparent; margin-bottom: -1.5px; white-space: nowrap; cursor: pointer; }
   .tab-btn.active { color: var(--stamp); border-color: var(--stamp); }
   .tab-panel[hidden] { display: none; }
 
@@ -170,7 +170,7 @@
         <a href="#achados">Achados</a>
         <a href="#categorias">Categorias</a>
         <a href="#anuncie">Anuncie</a>
-        <a class="btn btn-primary btn-small" id="ig-follow-btn" href="#" target="_blank" rel="noopener noreferrer">Seguir</a>
+        <a class="btn btn-primary btn-small" id="ig-follow-btn" href="https://instagram.com" target="_blank" rel="noopener noreferrer">Seguir</a>
       </div>
     </div>
   </nav>
@@ -182,7 +182,7 @@
       <p>Produtos com os melhores preços do Mercado Livre. Testado, aprovado e com link direto.</p>
       <div class="hero-ctas">
         <a href="#achados" class="btn btn-primary">Ver achados</a>
-        <a id="ig-follow-btn-2" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Seguir no Instagram →</a>
+        <a id="ig-follow-btn-2" href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Seguir no Instagram →</a>
       </div>
     </div>
   </header>
@@ -434,15 +434,26 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'achados-vendidos-data-v2';
-    const ADMIN_KEY = 'achados-vendidos-admin-v2';
+    const STORAGE_KEY = 'achados-vendidos-data-v3';
+    const ADMIN_KEY = 'achados-vendidos-admin-v3';
 
     function loadData() {
       const data = localStorage.getItem(STORAGE_KEY);
       return data ? JSON.parse(data) : { 
-        products: [], 
+        products: [
+          { url: 'https://meli.la/2DQ5Set', title: 'Produto 1', category: 'eletrônicos', price: '', note: '', image: null },
+          { url: 'https://meli.la/1SobzQc', title: 'Produto 2', category: 'eletrônicos', price: '', note: '', image: null },
+          { url: 'https://meli.la/2DvbM2x', title: 'Produto 3', category: 'moda', price: '', note: '', image: null },
+          { url: 'https://meli.la/1xGEd2y', title: 'Produto 4', category: 'casa', price: '', note: '', image: null },
+          { url: 'https://meli.la/1UrHuur', title: 'Produto 5', category: 'esportes', price: '', note: '', image: null },
+          { url: 'https://meli.la/1WsQcX9', title: 'Produto 6', category: 'eletrônicos', price: '', note: '', image: null },
+          { url: 'https://meli.la/16ERb19', title: 'Produto 7', category: 'livros', price: '', note: '', image: null },
+          { url: 'https://meli.la/2W1Qa29', title: 'Produto 8', category: 'moda', price: '', note: '', image: null },
+          { url: 'https://meli.la/1XzB9wb', title: 'Produto 9', category: 'casa', price: '', note: '', image: null },
+          { url: 'https://meli.la/31Do25n', title: 'Produto 10', category: 'eletrônicos', price: '', note: '', image: null }
+        ], 
         ads: [], 
-        settings: { instagram: '', price: '29.90', contact: '', title: 'Ofertas incríveis' }
+        settings: { instagram: 'https://instagram.com', price: '29.90', contact: '', title: 'Ofertas incríveis' }
       };
     }
 
@@ -795,6 +806,7 @@
       saveData(data);
       updateAdInfo();
       renderProducts();
+      updateInstagramLink();
       showToast('✓ Configurações salvas!');
     });
 
