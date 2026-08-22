@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Achados & Vendidos — as melhores ofertas do Mercado Livre, direto do Instagram.">
+<title>Achados & Vendidos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Karla:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #EDE3D0;
+    --paper-deep: #E1D3B4;
+    --paper-card: #F5EEDF;
+    --ink: #2A2118;
+    --ink-soft: #5C5240;
+    --ink-faint: #8A7F68;
+    --stamp: #B23A2E;
+    --stamp-deep: #8A2A21;
+    --gold: #C98A1F;
+    --gold-deep: #8F630F;
+    --approve: #2F6B4F;
+    --line: rgba(42,33,24,0.16);
+    --line-strong: rgba(42,33,24,0.32);
+    --font-display: 'Archivo Black', Impact, sans-serif;
+    --font-body: 'Karla', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'Space Mono', 'Courier New', monospace;
+    --shadow-card: 0 1px 0 rgba(42,33,24,0.05);
+    --shadow-hover: 0 16px 28px -14px rgba(42,33,24,0.4);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background-color: var(--paper);
+    background-image: radial-gradient(circle at 1px 1px, rgba(42,33,24,0.06) 1px, transparent 0);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; }
+  button { font-family: inherit; cursor: pointer; }
+  h1, h2, h3, h4 { margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: 0.01em; }
+  p { margin: 0; }
+
+  /* nav */
+  .nav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; max-width: 1120px; margin: 0 auto; gap: 16px; }
+  .brand { font-family: var(--font-display); font-size: 18px; }
+  .nav-links { display: flex; align-items: center; gap: 22px; }
+  .nav-links a:not(.btn) { text-decoration: none; font-size: 14px; font-weight: 700; color: var(--ink-soft); }
+  .nav-links a:not(.btn):hover { color: var(--ink); }
+
+  /* buttons */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; border-radius: 999px; font-weight: 700; font-size: 14px; border: 1.5px solid transparent; text-decoration: none; transition: background .15s ease, color .15s ease, border-color .15s ease; }
+  .btn-primary { background: var(--stamp); color: var(--paper-card); }
+  .btn-primary:hover { background: var(--stamp-deep); }
+  .btn-outline { background: transparent; border-color: var(--ink); color: var(--ink); }
+  .btn-outline:hover { background: var(--ink); color: var(--paper); }
+  .btn-ghost { background: none; border: none; color: var(--ink-soft); text-decoration: underline; padding: 6px; font-weight: 700; font-size: 13px; }
+  .btn-ghost:hover { color: var(--ink); }
+
+  /* hero */
+  .hero { padding: 72px 0 52px; text-align: center; }
+  .hero-badge { display: inline-block; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-deep); background: rgba(201,138,31,0.14); border: 1px solid rgba(201,138,31,0.45); padding: 6px 14px; border-radius: 999px; margin-bottom: 22px; }
+  .hero h1 { font-size: clamp(38px, 8vw, 74px); color: var(--stamp); display: inline-block; transform: rotate(-1.4deg); line-height: 1; }
+  .hero p { max-width: 520px; margin: 22px auto 32px; font-size: 18px; color: var(--ink-soft); }
+  .hero-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  /* sections */
+  .section { padding: 52px 0; border-top: 1px solid var(--line); }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .section-head h2 { font-size: 26px; }
+  .count-badge { font-family: var(--font-mono); font-size: 13px; color: var(--ink-faint); }
+  .section-sub { color: var(--ink-soft); margin-top: 8px; max-width: 560px; }
+
+  /* product card */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 22px; margin-top: 28px; }
+  .product-card { position: relative; background: var(--paper-card); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-card); transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; display: flex; flex-direction: column; }
+  .product-card:nth-child(3n) { transform: rotate(-1deg); }
+  .product-card:nth-child(3n+1) { transform: rotate(0.6deg); }
+  .product-card:nth-child(3n+2) { transform: rotate(-0.3deg); }
+  .product-card:hover { transform: rotate(0deg) translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--line-strong); }
+  .product-image { width: 100%; height: 180px; background: linear-gradient(135deg, rgba(201,138,31,0.1) 0%, rgba(178,58,46,0.08) 100%); display: flex; align-items: center; justify-content: center; font-size: 48px; color: rgba(42,33,24,0.1); overflow: hidden; }
+  .product-image img { width: 100%; height: 100%; object-fit: cover; }
+  .product-info { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+  .product-title { font-weight: 700; font-size: 16px; margin-bottom: 8px; line-height: 1.3; }
+  .product-note { font-size: 13px; color: var(--ink-soft); margin-bottom: 12px; }
+  .product-footer { display: flex; gap: 8px; margin-top: auto; }
+  .product-link { flex: 1; }
+  .product-link a { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; font-size: 12px; color: var(--paper-card); background: var(--stamp); padding: 10px 12px; border-radius: 5px; text-decoration: none; width: 100%; transition: background .15s ease; }
+  .product-link a:hover { background: var(--stamp-deep); }
+  
+  .sponsor-badge { position: absolute; top: -9px; right: 12px; background: var(--gold); color: #2A1D06; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; transform: rotate(2deg); box-shadow: 0 2px 5px rgba(0,0,0,0.18); }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--ink-faint); border: 1.5px dashed var(--line-strong); border-radius: 10px; margin-top: 28px; }
+
+  /* ad panel */
+  .ad-panel { background: var(--paper-card); border: 1px solid var(--line); border-radius: 10px; padding: 32px; margin-top: 24px; }
+  .ad-info { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 30px; padding-bottom: 26px; border-bottom: 1.5px dashed var(--line-strong); }
+  .ad-info-item { flex: 1; min-width: 180px; }
+  .ad-info-item .label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 4px; }
+  .ad-info-item .value { font-weight: 700; font-size: 15px; }
+  .ad-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+
+  /* forms */
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field label { font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+  .field input, .field textarea { font-family: var(--font-body); font-size: 15px; padding: 11px 13px; border-radius: 5px; border: 1.5px solid var(--line-strong); background: var(--paper-card); color: var(--ink); width: 100%; }
+  .field textarea { resize: vertical; }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--stamp); box-shadow: 0 0 0 3px rgba(178,58,46,0.15); }
+  .field-error { font-size: 12px; color: var(--stamp); display: none; }
+  .field.has-error input, .field.has-error textarea { border-color: var(--stamp); }
+  .field.has-error .field-error { display: block; }
+
+  /* footer */
+  .footer { padding: 40px 0 60px; text-align: center; color: var(--ink-faint); font-size: 13px; }
+  .footer > .wrap > div:first-child { font-family: var(--font-display); font-size: 15px; color: var(--ink-soft); margin-bottom: 6px; }
+
+  /* toast */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--paper); padding: 12px 22px; border-radius: 8px; font-size: 14px; font-weight: 700; opacity: 0; pointer-events: none; transition: all .25s ease; z-index: 200; max-width: 90vw; text-align: center; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { background: var(--stamp); }
+
+  /* modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(42,33,24,0.55); display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; z-index: 100; overflow-y: auto; }
+  .modal-overlay[hidden] { display: none; }
+  .modal { background: var(--paper); border-radius: 12px; max-width: 640px; width: 100%; padding: 32px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.3); }
+  .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; line-height: 1; color: var(--ink-soft); padding: 6px; }
+  .modal-close:hover { color: var(--ink); }
+  .tabs { display: flex; gap: 4px; border-bottom: 1.5px solid var(--line); margin: 22px 0 24px; }
+  .tab-btn { background: none; border: none; padding: 10px 16px; font-weight: 700; font-size: 14px; color: var(--ink-faint); border-bottom: 2px solid transparent; margin-bottom: -1.5px; }
+  .tab-btn.active { color: var(--stamp); border-color: var(--stamp); }
+  .tab-panel[hidden] { display: none; }
+
+  /* admin rows */
+  .admin-row { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .admin-row:last-child { border-bottom: none; }
+  .admin-row-main { flex: 1; min-width: 0; }
+  .admin-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .icon-btn { background: none; border: 1px solid var(--line-strong); border-radius: 5px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); flex-shrink: 0; }
+  .icon-btn:hover { background: var(--paper-deep); }
+  .icon-btn.danger:hover { background: var(--stamp); color: #fff; border-color: var(--stamp); }
+  .row-url { font-size: 13px; color: var(--ink-soft); word-break: break-all; }
+  .row-url a { color: var(--ink-soft); }
+
+  .status-stamp { display: inline-block; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 3px; border: 1.5px solid; transform: rotate(-2deg); text-transform: uppercase; }
+  .status-pending { color: var(--gold-deep); border-color: var(--gold); background: rgba(201,138,31,0.12); }
+  .status-approved { color: var(--approve); border-color: var(--approve); background: rgba(47,107,79,0.1); }
+  .status-rejected { color: var(--stamp); border-color: var(--stamp); background: rgba(178,58,46,0.1); }
+
+  @media (max-width: 640px) {
+    .ad-form-grid { grid-template-columns: 1fr; }
+    .modal { padding: 24px 18px; }
+    .ad-panel { padding: 22px 18px; }
+    .hero p { font-size: 16px; }
+  }
+  @media (max-width: 480px) {
+    .nav-links a:not(.btn) { display: none; }
+    .nav-inner { padding: 14px 16px; }
+    .wrap { padding: 0 16px; }
+    .hero { padding: 56px 0 38px; }
+    .btn { padding: 10px 18px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">Achados <span style="color:var(--stamp)">&amp;</span> Vendidos</div>
+      <div class="nav-links">
+        <a href="#achados">Achados</a>
+        <a href="#anuncie">Anuncie aqui</a>
+        <a class="btn btn-primary" id="ig-follow-btn" href="#" target="_blank" rel="noopener noreferrer">Seguir</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="hero-badge">Link na bio</span>
+      <h1>Achados &amp; Vendidos</h1>
+      <p>Ofertas separadas a dedo no Mercado Livre. Achou, quer? É só tocar no link.</p>
+      <div class="hero-ctas">
+        <a href="#achados" class="btn btn-primary">Ver achados</a>
+        <a id="ig-follow-btn-2" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Seguir no Instagram</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="achados">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Achados da semana</h2>
+        <span class="count-badge" id="product-count">— achados</span>
+      </div>
+      <p class="section-sub">Toda vez que a gente encontra um preço bom, o link cai aqui primeiro.</p>
+      <div class="grid" id="products-grid">
+        <p style="color:var(--ink-faint); grid-column:1/-1;">Carregando achados…</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sponsored-section" hidden>
+    <div class="wrap">
+      <div class="section-head"><h2>Patrocinado</h2></div>
+      <p class="section-sub">Anúncios de quem também quer aparecer por aqui.</p>
+      <div class="grid" id="sponsored-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="anuncie">
+    <div class="wrap">
+      <div class="section-head"><h2>Anuncie aqui</h2></div>
+      <p class="section-sub">Quer colocar seu produto na frente de quem já tá pronto pra comprar? Reserve um espaço de destaque no perfil.</p>
+      <div class="ad-panel">
+        <div class="ad-info">
+          <div class="ad-info-item"><div class="label">Valor</div><div class="value" id="ad-price-display">—</div></div>
+          <div class="ad-info-item"><div class="label">Pagamento</div><div class="value" id="ad-payment-display">—</div></div>
+          <div class="ad-info-item"><div class="label">Contato</div><div class="value" id="ad-contact-display">—</div></div>
+        </div>
+        <form id="ad-request-form" novalidate>
+          <div class="ad-form-grid">
+            <div class="field" data-field="advertiserName">
+              <label for="ad-name">Seu nome</label>
+              <input id="ad-name" type="text" placeholder="Como podemos te chamar">
+              <span class="field-error">Conta pra gente seu nome.</span>
+            </div>
+            <div class="field" data-field="contact">
+              <label for="ad-contact">WhatsApp ou Instagram</label>
+              <input id="ad-contact" type="text" placeholder="@seuinstagram ou (11) 90000-0000">
+              <span class="field-error">A gente precisa de um jeito de te responder.</span>
+            </div>
+          </div>
+          <div class="field" data-field="url">
+            <label for="ad-url">Link do produto</label>
+            <input id="ad-url" type="text" placeholder="https://...">
+            <span class="field-error">Link inválido. Use um endereço começando com http:// ou https://</span>
+          </div>
+          <div class="field" data-field="title">
+            <label for="ad-title">Título do anúncio</label>
+            <input id="ad-title" type="text" placeholder="Como o anúncio deve aparecer">
+            <span class="field-error">Dá um título pro anúncio.</span>
+          </div>
+          <div class="field">
+            <label for="ad-note">Observação (opcional)</label>
+            <textarea id="ad-note" rows="3" placeholder="Alguma informação extra"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Enviar solicitação</button>
+        </form>
+        <div id="ad-confirmation" class="empty-state" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>Achados &amp; Vendidos</div>
+      <button class="btn-ghost" id="open-admin-btn" type="button">Área do administrador</button>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-overlay" id="admin-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
+    <div class="modal" id="admin-modal">
+      <button class="modal-close" id="close-admin-btn" type="button" aria-label="Fechar">×</button>
+
+      <div id="admin-login-view">
+        <h3 id="admin-modal-title">Área do administrador</h3>
+        <p class="section-sub">Digite a senha de acesso.</p>
+        <form id="admin-login-form" novalidate style="margin-top:20px;">
+          <div class="field" data-field="passcode">
+            <label for="login-passcode">Senha</label>
+            <input id="login-passcode" type="password" autocomplete="current-password">
+            <span class="field-error">Digite a senha.</span>
+          </div>
+          <button type="submit" class="btn btn-primary">Entrar</button>
+        </form>
+      </div>
+
+      <div id="admin-setup-view" hidden>
+        <h3>Criar senha de acesso</h3>
+        <p class="section-sub">Primeira vez por aqui. Crie uma senha para proteger o painel — só quem souber ela vai conseguir editar o site.</p>
+        <form id="admin-setup-form" novalidate style="margin-top:20px;">
+          <div class="field" data-field="newPasscode">
+            <label for="setup-passcode">Nova senha</label>
+            <input id="setup-passcode" type="password" autocomplete="new-password">
+            <span class="field-error">Escolha uma senha com pelo menos 4 caracteres.</span>
+          </div>
+          <div class="field" data-field="confirmPasscode">
+            <label for="setup-passcode-confirm">Confirmar senha</label>
+            <input id="setup-passcode-confirm" type="password" autocomplete="new-password">
+            <span class="field-error">As senhas precisam ser iguais.</span>
+          </div>
+          <button type="submit" class="btn btn-primary">Criar e entrar</button>
+        </form>
+      </div>
+
+      <div id="admin-panel-view" hidden>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+          <h3 style="font-size:20px;">Painel administrativo</h3>
+          <button class="btn-ghost" id="admin-logout-btn" type="button">Sair</button>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="products" type="button">Achados</button>
+          <button class="tab-btn" data-tab="ads" type="button">Solicitações de anúncios</button>
+          <button class="tab-btn" data-tab="settings" type="button">Configurações</button>
+        </div>
+
+        <div class="tab-panel" data-tab-panel="products">
+          <form id="add-product-form" novalidate>
+            <div class="field" data-field="url">
+              <label for="new-product-url">Link do produto</label>
+              <input id="new-product-url" type="text" placeholder="https://meli.la/...">
+              <span class="field-error">Link inválido. Use um endereço começando com http:// ou https://</span>
+            </div>
+            <div class="ad-form-grid">
+              <div class="field" data-field="title">
+                <label for="new-product-title">Título</label>
+                <input id="new-product-title" type="text" placeholder="Nome do achado">
+                <span class="field-error">Dá um título pro achado.</span>
+              </div>
+              <div class="field">
+                <label for="new-product-note">Observação (opcional)</label>
+                <input id="new-product-note" type="text" placeholder="Ex: só até acabar o estoque">
+              </div>
+            </div>
+            <div class="field">
+              <label for="new-product-image">URL da imagem (opcional)</label>
+              <input id="new-product-image" type="text" placeholder="https://...">
+            </div>
+            <button type="submit" class="btn btn-primary">Adicionar achado</button>
+          </form>
+          <div style="margin-top:24px;" id="admin-products-list"></div>
+        </div>
+
+        <div class="tab-panel" data-tab-panel="ads" hidden>
+          <div id="admin-ads-list"></div>
+        </div>
+
+        <div class="tab-panel" data-tab-panel="settings" hidden>
+          <form id="settings-form" novalidate>
+            <div class="field">
+              <label for="settings-instagram">Link do Instagram</label>
+              <input id="settings-instagram" type="text" placeholder="https://instagram.com/seu.perfil">
+            </div>
+            <div class="field">
+              <label for="settings-price">Valor do anúncio (R$)</label>
+              <input id="settings-price" type="text" placeholder="50">
+            </div>
+            <div class="field">
+              <label for="settings-payment">Forma de pagamento</label>
+              <input id="settings-payment" type="text" placeholder="PIX, Transferência, Boleto">
+            </div>
+            <div class="field">
+              <label for="settings-contact">Seu contato (WhatsApp/Email)</label>
+              <input id="settings-contact" type="text" placeholder="(11) 90000-0000">
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar configurações</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== STORAGE ======
+    const STORAGE_KEY = 'achados-vendidos-data';
+    const ADMIN_KEY = 'achados-vendidos-admin';
+
+    function loadData() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : { products: [], ads: [], settings: {} };
+    }
+
+    function saveData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function getAdminPasscode() {
+      return localStorage.getItem(ADMIN_KEY);
+    }
+
+    function setAdminPasscode(passcode) {
+      localStorage.setItem(ADMIN_KEY, passcode);
+    }
+
+    // ====== UI STATE ======
+    let isAdminLoggedIn = false;
+
+    // ====== UTILS ======
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.toggle('error', isError);
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function isValidUrl(string) {
+      try {
+        const url = new URL(string);
+        return url.protocol === 'http:' || url.protocol === 'https:';
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function validateForm(formId) {
+      const form = document.getElementById(formId);
+      let isValid = true;
+      form.querySelectorAll('[data-field]').forEach(field => {
+        const fieldName = field.dataset.field;
+        const input = field.querySelector('input, textarea');
+        const error = field.querySelector('.field-error');
+        let hasError = false;
+
+        if (fieldName === 'url') {
+          hasError = !isValidUrl(input.value);
+        } else if (fieldName === 'newPasscode') {
+          hasError = input.value.length < 4;
+        } else if (fieldName === 'confirmPasscode') {
+          const newPasscode = form.querySelector('[data-field="newPasscode"] input').value;
+          hasError = input.value !== newPasscode;
+        } else {
+          hasError = !input.value.trim();
+        }
+
+        field.classList.toggle('has-error', hasError);
+        if (hasError) isValid = false;
+      });
+      return isValid;
+    }
+
+    function getImageData(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = 240;
+          canvas.height = 180;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, 240, 180);
+          resolve(canvas.toDataURL());
+        };
+        img.onerror = () => resolve(null);
+        img.src = url;
+      });
+    }
+
+    // ====== PRODUCTS ======
+    function renderProducts() {
+      const data = loadData();
+      const grid = document.getElementById('products-grid');
+      const count = document.getElementById('product-count');
+
+      count.textContent = `${data.products.length} achados`;
+
+      if (data.products.length === 0) {
+        grid.innerHTML = '<p style="color:var(--ink-faint); grid-column:1/-1; text-align: center;">Nenhum achado por enquanto. Volte em breve!</p>';
+        return;
+      }
+
+      grid.innerHTML = data.products.map((product, idx) => `
+        <div class="product-card">
+          <div class="product-image">
+            ${product.image ? `<img src="${product.image}" alt="${product.title}">` : '📦'}
+          </div>
+          <div class="product-info">
+            <div class="product-title">${product.title}</div>
+            ${product.note ? `<div class="product-note">${product.note}</div>` : ''}
+            <div class="product-footer">
+              <div class="product-link">
+                <a href="${product.url}" target="_blank" rel="noopener noreferrer">Ver oferta</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ====== ADS ======
+    function renderSponsored() {
+      const data = loadData();
+      const section = document.getElementById('sponsored-section');
+      const grid = document.getElementById('sponsored-grid');
+      const approved = data.ads.filter(ad => ad.status === 'approved');
+
+      if (approved.length === 0) {
+        section.hidden = true;
+        return;
+      }
+
+      section.hidden = false;
+      grid.innerHTML = approved.map(ad => `
+        <div class="product-card">
+          <div class="sponsor-badge">PATROCINADO</div>
+          <div class="product-image">
+            ${ad.image ? `<img src="${ad.image}" alt="${ad.title}">` : '📦'}
+          </div>
+          <div class="product-info">
+            <div class="product-title">${ad.title}</div>
+            ${ad.note ? `<div class="product-note">${ad.note}</div>` : ''}
+            <div class="product-footer">
+              <div class="product-link">
+                <a href="${ad.url}" target="_blank" rel="noopener noreferrer">Ver produto</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderAdList() {
+      const data = loadData();
+      const list = document.getElementById('admin-ads-list');
+
+      if (data.ads.length === 0) {
+        list.innerHTML = '<div class="empty-state">Nenhuma solicitação ainda.</div>';
+        return;
+      }
+
+      list.innerHTML = data.ads.map((ad, idx) => `
+        <div class="admin-row">
+          <div class="admin-row-main">
+            <div style="font-weight: 700; margin-bottom: 4px;">${ad.title}</div>
+            <div class="row-url"><strong>${ad.advertiserName}</strong> • ${ad.contact}</div>
+            <div class="row-url"><a href="${ad.url}" target="_blank">${ad.url}</a></div>
+            ${ad.note ? `<div style="font-size: 13px; color: var(--ink-soft); margin-top: 6px;">${ad.note}</div>` : ''}
+            <div style="margin-top: 8px;">
+              <span class="status-stamp status-${ad.status}">${ad.status === 'pending' ? 'Pendente' : ad.status === 'approved' ? 'Aprovado' : 'Rejeitado'}</span>
+            </div>
+          </div>
+          <div class="admin-row-actions">
+            ${ad.status === 'pending' ? `
+              <button class="icon-btn" onclick="approveAd(${idx})" title="Aprovar">✓</button>
+              <button class="icon-btn danger" onclick="rejectAd(${idx})" title="Rejeitar">✕</button>
+            ` : ''}
+            <button class="icon-btn danger" onclick="deleteAd(${idx})" title="Deletar">🗑</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function approveAd(idx) {
+      const data = loadData();
+      data.ads[idx].status = 'approved';
+      saveData(data);
+      renderAdList();
+      renderSponsored();
+      showToast('Anúncio aprovado!');
+    }
+
+    function rejectAd(idx) {
+      const data = loadData();
+      data.ads[idx].status = 'rejected';
+      saveData(data);
+      renderAdList();
+      renderSponsored();
+      showToast('Anúncio rejeitado.');
+    }
+
+    function deleteAd(idx) {
+      if (confirm('Tem certeza que quer deletar?')) {
+        const data = loadData();
+        data.ads.splice(idx, 1);
+        saveData(data);
+        renderAdList();
+        renderSponsored();
+        showToast('Anúncio deletado.');
+      }
+    }
+
+    // ====== ADMIN - PRODUCTS ======
+    function renderProductList() {
+      const data = loadData();
+      const list = document.getElementById('admin-products-list');
+
+      if (data.products.length === 0) {
+        list.innerHTML = '<div class="empty-state">Nenhum achado adicionado ainda.</div>';
+        return;
+      }
+
+      list.innerHTML = data.products.map((product, idx) => `
+        <div class="admin-row">
+          <div class="admin-row-main">
+            <div style="font-weight: 700; margin-bottom: 4px;">${product.title}</div>
+            <div class="row-url"><a href="${product.url}" target="_blank">${product.url}</a></div>
+            ${product.note ? `<div style="font-size: 13px; color: var(--ink-soft); margin-top: 4px;">${product.note}</div>` : ''}
+          </div>
+          <div class="admin-row-actions">
+            <button class="icon-btn danger" onclick="deleteProduct(${idx})" title="Deletar">🗑</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function deleteProduct(idx) {
+      if (confirm('Tem certeza que quer deletar este achado?')) {
+        const data = loadData();
+        data.products.splice(idx, 1);
+        saveData(data);
+        renderProductList();
+        renderProducts();
+        showToast('Achado deletado.');
+      }
+    }
+
+    // ====== ADMIN - SETTINGS ======
+    function loadSettings() {
+      const data = loadData();
+      document.getElementById('settings-instagram').value = data.settings.instagram || '';
+      document.getElementById('settings-price').value = data.settings.price || '';
+      document.getElementById('settings-payment').value = data.settings.payment || '';
+      document.getElementById('settings-contact').value = data.settings.contact || '';
+      updateAdInfo();
+    }
+
+    function updateAdInfo() {
+      const data = loadData();
+      document.getElementById('ad-price-display').textContent = data.settings.price ? `R$ ${data.settings.price}` : '—';
+      document.getElementById('ad-payment-display').textContent = data.settings.payment || '—';
+      document.getElementById('ad-contact-display').textContent = data.settings.contact || '—';
+    }
+
+    // ====== ADMIN - AUTH ======
+    function checkAdminSetup() {
+      return getAdminPasscode() !== null;
+    }
+
+    function showAdminSetup() {
+      document.getElementById('admin-login-view').hidden = true;
+      document.getElementById('admin-setup-view').hidden = false;
+    }
+
+    function showAdminLogin() {
+      document.getElementById('admin-login-view').hidden = false;
+      document.getElementById('admin-setup-view').hidden = true;
+    }
+
+    function showAdminPanel() {
+      document.getElementById('admin-login-view').hidden = true;
+      document.getElementById('admin-setup-view').hidden = true;
+      document.getElementById('admin-panel-view').hidden = false;
+      isAdminLoggedIn = true;
+      loadSettings();
+      renderProductList();
+      renderAdList();
+    }
+
+    function hideAdminPanel() {
+      document.getElementById('admin-panel-view').hidden = true;
+      isAdminLoggedIn = false;
+      document.getElementById('login-passcode').value = '';
+      document.getElementById('setup-passcode').value = '';
+      document.getElementById('setup-passcode-confirm').value = '';
+    }
+
+    // ====== FORMS ======
+    document.getElementById('admin-login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!validateForm('admin-login-form')) return;
+      const passcode = document.getElementById('login-passcode').value;
+      if (passcode === getAdminPasscode()) {
+        showAdminPanel();
+      } else {
+        showToast('Senha incorreta.', true);
+      }
+    });
+
+    document.getElementById('admin-setup-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!validateForm('admin-setup-form')) return;
+      const passcode = document.getElementById('setup-passcode').value;
+      setAdminPasscode(passcode);
+      showAdminPanel();
+      showToast('Senha criada com sucesso!');
+    });
+
+    document.getElementById('add-product-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!validateForm('add-product-form')) return;
+
+      const url = document.getElementById('new-product-url').value;
+      const title = document.getElementById('new-product-title').value;
+      const note = document.getElementById('new-product-note').value;
+      const imageUrl = document.getElementById('new-product-image').value;
+
+      const data = loadData();
+      let image = null;
+      if (imageUrl) {
+        image = await getImageData(imageUrl);
+      }
+
+      data.products.push({ url, title, note, image });
+      saveData(data);
+      document.getElementById('add-product-form').reset();
+      renderProductList();
+      renderProducts();
+      showToast('Achado adicionado!');
+    });
+
+    document.getElementById('ad-request-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!validateForm('ad-request-form')) return;
+
+      const advertiserName = document.getElementById('ad-name').value;
+      const contact = document.getElementById('ad-contact').value;
+      const url = document.getElementById('ad-url').value;
+      const title = document.getElementById('ad-title').value;
+      const note = document.getElementById('ad-note').value;
+
+      const data = loadData();
+      data.ads.push({
+        advertiserName,
+        contact,
+        url,
+        title,
+        note,
+        status: 'pending',
+        image: null,
+        createdAt: new Date().toISOString()
+      });
+      saveData(data);
+
+      document.getElementById('ad-request-form').hidden = true;
+      document.getElementById('ad-confirmation').hidden = false;
+      document.getElementById('ad-confirmation').innerHTML = `
+        <p style="margin-bottom: 12px;">✓ Solicitação recebida com sucesso!</p>
+        <p style="font-size: 13px; color: var(--ink-soft);">A gente vai analisar e te responder em breve no contato que você deixou.</p>
+      `;
+
+      setTimeout(() => {
+        document.getElementById('ad-request-form').hidden = false;
+        document.getElementById('ad-confirmation').hidden = true;
+        document.getElementById('ad-request-form').reset();
+      }, 4000);
+    });
+
+    document.getElementById('settings-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = loadData();
+      data.settings = {
+        instagram: document.getElementById('settings-instagram').value,
+        price: document.getElementById('settings-price').value,
+        payment: document.getElementById('settings-payment').value,
+        contact: document.getElementById('settings-contact').value
+      };
+      saveData(data);
+      updateAdInfo();
+      showToast('Configurações salvas!');
+    });
+
+    // ====== MODAL ======
+    document.getElementById('open-admin-btn').addEventListener('click', () => {
+      document.getElementById('admin-overlay').hidden = false;
+      if (checkAdminSetup()) {
+        showAdminLogin();
+      } else {
+        showAdminSetup();
+      }
+    });
+
+    document.getElementById('close-admin-btn').addEventListener('click', () => {
+      document.getElementById('admin-overlay').hidden = true;
+      hideAdminPanel();
+    });
+
+    document.getElementById('admin-overlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('admin-overlay')) {
+        document.getElementById('admin-overlay').hidden = true;
+        hideAdminPanel();
+      }
+    });
+
+    document.getElementById('admin-logout-btn').addEventListener('click', () => {
+      hideAdminPanel();
+      showAdminLogin();
+    });
+
+    // ====== TABS ======
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabName = btn.dataset.tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.hidden = true);
+        btn.classList.add('active');
+        document.querySelector(`[data-tab-panel="${tabName}"]`).hidden = false;
+      });
+    });
+
+    // ====== INSTAGRAM ======
+    function updateInstagramLink() {
+      const data = loadData();
+      const igLink = data.settings.instagram || 'https://instagram.com';
+      document.getElementById('ig-follow-btn').href = igLink;
+      document.getElementById('ig-follow-btn-2').href = igLink;
+    }
+
+    // ====== INIT ======
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts();
+      renderSponsored();
+      updateInstagramLink();
+      updateAdInfo();
+    });
+  </script>
+
+</body>
+</html>
