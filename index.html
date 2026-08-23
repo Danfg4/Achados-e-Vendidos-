@@ -322,6 +322,199 @@
             <div class="field">
               <label for="new-product-image">📸 Foto do produto</label>
               <div class="file-input-wrapper">
+                <input id="new-product-image" type="file" a }
+  .admin-row-main { flex: 1; min-width: 0; }
+  .admin-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .icon-btn { background: none; border: 1px solid var(--line-strong); border-radius: 5px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); flex-shrink: 0; cursor: pointer; }
+  .icon-btn:hover { background: var(--paper-deep); }
+  .icon-btn.danger:hover { background: var(--stamp); color: #fff; border-color: var(--stamp); }
+  .status-stamp { display: inline-block; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 3px; border: 1.5px solid; transform: rotate(-2deg); text-transform: uppercase; }
+  .status-pending { color: var(--gold-deep); border-color: var(--gold); background: rgba(201,138,31,0.12); }
+  .status-approved { color: var(--approve); border-color: var(--approve); background: rgba(47,107,79,0.1); }
+  .status-rejected { color: var(--stamp); border-color: var(--stamp); background: rgba(178,58,46,0.1); }
+
+  .badge { display: inline-block; background: rgba(178,58,46,0.1); color: var(--stamp); padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 700; }
+
+  .help-box { background: rgba(201,138,31,0.1); border: 1px solid rgba(201,138,31,0.3); border-radius: 8px; padding: 16px; margin-bottom: 20px; font-size: 14px; color: var(--ink-soft); }
+  .help-box strong { color: var(--ink); }
+
+  .image-preview { width: 100%; max-width: 200px; height: 150px; background: var(--paper-deep); border-radius: 8px; object-fit: cover; margin-top: 8px; }
+  .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+  .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
+  .file-input-label { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(178,58,46,0.1); border: 2px dashed var(--stamp); border-radius: 8px; cursor: pointer; transition: background .15s ease; }
+  .file-input-label:hover { background: rgba(178,58,46,0.2); }
+
+  @media (max-width: 640px) {
+    .ad-form-grid { grid-template-columns: 1fr; }
+    .modal { padding: 24px 18px; }
+    .ad-panel { padding: 22px 18px; }
+    .hero p { font-size: 16px; }
+    .tabs { gap: 2px; }
+    .tab-btn { padding: 10px 12px; font-size: 12px; }
+  }
+  @media (max-width: 480px) {
+    .nav-links a:not(.btn) { display: none; }
+    .nav-inner { padding: 14px 16px; }
+    .wrap { padding: 0 16px; }
+    .hero { padding: 56px 0 38px; }
+    .btn { padding: 10px 18px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">Achados <span style="color:var(--stamp)">&amp;</span> Vendidos</div>
+      <div class="nav-links">
+        <a href="#achados">Achados</a>
+        <a href="#anuncie">Anuncie</a>
+        <a class="btn btn-primary btn-small" id="ig-follow-btn" href="https://instagram.com" target="_blank" rel="noopener noreferrer">📷 Seguir</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="hero-badge">🔥 Ofertas incríveis</span>
+      <h1>Achados &amp; Vendidos</h1>
+      <p>Produtos com os melhores preços do Mercado Livre.</p>
+      <div class="hero-ctas">
+        <a href="#achados" class="btn btn-primary">Ver achados</a>
+        <a id="ig-follow-btn-2" href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Seguir no Instagram →</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="achados">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Achados da semana</h2>
+        <span class="count-badge" id="product-count">— achados</span>
+      </div>
+      <p class="section-sub">Clique em qualquer produto pra ver no Mercado Livre.</p>
+      <div class="grid" id="products-grid">
+        <p style="color:var(--ink-faint); grid-column:1/-1;">Carregando achados…</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sponsored-section" hidden>
+    <div class="wrap">
+      <div class="section-head"><h2>⭐ Patrocinado</h2></div>
+      <p class="section-sub">Anúncios em destaque.</p>
+      <div class="grid" id="sponsored-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="anuncie">
+    <div class="wrap">
+      <div class="section-head"><h2>Anuncie aqui</h2></div>
+      <p class="section-sub">Quer colocar seu produto em destaque? Envie uma solicitação!</p>
+
+      <div class="ad-panel">
+        <div class="help-box">
+          <strong>💡 Como funciona:</strong> Envie seus dados abaixo. Você receberá um WhatsApp confirmando se seu anúncio foi aprovado!
+        </div>
+
+        <div class="ad-info">
+          <div class="ad-info-item"><div class="label">💰 Valor</div><div class="value" id="ad-price-display">R$ 29,90</div></div>
+          <div class="ad-info-item"><div class="label">📅 Duração</div><div class="value">7 dias</div></div>
+          <div class="ad-info-item"><div class="label">📱 Contato</div><div class="value" id="ad-contact-display">—</div></div>
+        </div>
+
+        <form id="ad-request-form" novalidate>
+          <div class="ad-form-grid">
+            <div class="field" data-field="advertiserName">
+              <label for="ad-name">✏️ Seu nome</label>
+              <input id="ad-name" type="text" placeholder="Ex: João Silva">
+              <span class="field-error">Preciso do seu nome!</span>
+            </div>
+            <div class="field" data-field="contact">
+              <label for="ad-contact">📱 Seu WhatsApp</label>
+              <input id="ad-contact" type="text" placeholder="(11) 90000-0000">
+              <span class="field-error">Preciso de um WhatsApp!</span>
+            </div>
+          </div>
+          <div class="field" data-field="url">
+            <label for="ad-url">🔗 Link do produto (Mercado Livre)</label>
+            <input id="ad-url" type="text" placeholder="https://meli.la/ABC123">
+            <span class="field-error">Link inválido! Começa com https://</span>
+          </div>
+          <div class="field" data-field="title">
+            <label for="ad-title">📝 Título do anúncio</label>
+            <input id="ad-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+            <span class="field-error">Preciso de um título!</span>
+          </div>
+          <div class="field">
+            <label for="ad-note">💬 Descrição (opcional)</label>
+            <textarea id="ad-note" rows="3" placeholder="Ex: Impecável, primeira mão..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">📤 Enviar solicitação</button>
+        </form>
+        <div id="ad-confirmation" class="empty-state" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>Achados &amp; Vendidos © 2026</div>
+      <p style="font-size: 12px; margin-top: 8px;">Não somos afiliados do Mercado Livre. Apenas curadores de ofertas.</p>
+      <button class="btn-ghost" id="open-admin-btn" type="button" style="margin-top: 12px;">🔐 Painel Admin</button>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-overlay" id="admin-overlay" hidden role="dialog" aria-modal="true">
+    <div class="modal" id="admin-modal">
+      <button class="modal-close" id="close-admin-btn" type="button">×</button>
+
+      <div id="admin-login-view">
+        <h3>🔐 Painel do Administrador</h3>
+        <p class="section-sub">Digite a senha para acessar.</p>
+        <form id="admin-login-form" novalidate style="margin-top:20px;">
+          <div class="field" data-field="passcode">
+            <label for="login-passcode">Senha</label>
+            <input id="login-passcode" type="password" autocomplete="current-password" placeholder="••••••">
+            <span class="field-error">Digite a senha!</span>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+        </form>
+      </div>
+
+      <div id="admin-panel-view" hidden>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 20px;">
+          <h3 style="font-size:20px; margin: 0;">🎛️ Painel Admin</h3>
+          <button class="btn-ghost" id="admin-logout-btn" type="button">Sair</button>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="products" type="button">📦 Produtos</button>
+          <button class="tab-btn" data-tab="ads" type="button">⭐ Anúncios</button>
+          <button class="tab-btn" data-tab="settings" type="button">⚙️ Config</button>
+        </div>
+
+        <div class="tab-panel" data-tab-panel="products">
+          <div class="help-box">
+            <strong>💡 Dica:</strong> Cole o link do Mercado Livre, dê um nome e escolha uma foto. Pronto!
+          </div>
+
+          <form id="add-product-form" novalidate style="background: rgba(47,107,79,0.05); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+            <h4 style="margin-bottom: 14px;">➕ Adicionar novo produto</h4>
+            <div class="field" data-field="url">
+              <label for="new-product-url">🔗 Link do Mercado Livre</label>
+              <input id="new-product-url" type="text" placeholder="https://meli.la/...">
+              <span class="field-error">Link inválido!</span>
+            </div>
+            <div class="field" data-field="title">
+              <label for="new-product-title">📝 Nome do produto</label>
+              <input id="new-product-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+              <span class="field-error">Precisa de um nome!</span>
+            </div>
+            <div class="field">
+              <label for="new-product-image">📸 Foto do produto</label>
+              <div class="file-input-wrapper">
                 <input id="new-product-image" type="file" a    background-image: radial-gradient(circle at 1px 1px, rgba(42,33,24,0.06) 1px, transparent 0);
     background-size: 22px 22px;
     color: var(--ink);
