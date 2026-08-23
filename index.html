@@ -1,40 +1,12 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Achados & Vendidos — as melhores ofertas do Mercado Livre.">
-<title>Achados & Vendidos</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Karla:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --paper: #EDE3D0;
-    --paper-deep: #E1D3B4;
-    --paper-card: #F5EEDF;
-    --ink: #2A2118;
-    --ink-soft: #5C5240;
-    --ink-faint: #8A7F68;
-    --stamp: #B23A2E;
-    --stamp-deep: #8A2A21;
-    --gold: #C98A1F;
-    --gold-deep: #8F630F;
-    --approve: #2F6B4F;
-    --line: rgba(42,33,24,0.16);
-    --line-strong: rgba(42,33,24,0.32);
-    --font-display: 'Archivo Black', Impact, sans-serif;
-    --font-body: 'Karla', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-mono: 'Space Mono', 'Courier New', monospace;
-    --shadow-card: 0 1px 0 rgba(42,33,24,0.05);
-    --shadow-hover: 0 16px 28px -14px rgba(42,33,24,0.4);
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /site/data {
+      allow read: if true;
+      allow write: if true;
+    }
   }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    margin: 0;
-    background-color: var(--paper);
-    background-image: radial-gradient(circle at 1px 1px, rgba(42,33,24,0.06) 1px, transparent 0);
+}    background-image: radial-gradient(circle at 1px 1px, rgba(42,33,24,0.06) 1px, transparent 0);
     background-size: 22px 22px;
     color: var(--ink);
     font-family: var(--font-body);
