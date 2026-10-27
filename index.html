@@ -1798,61 +1798,6 @@
       return true;
     }
 
-    async function loadRemoteData(adminMode) {
-      const productQuery = db.from('products').select('*').order('created_at', { ascending: false });
-      const adQuery = db.from('ad_requests').select('*').order('created_at', { ascending: false });
-      if (!adminMode) {
-        productQuery.eq('active', true);
-        adQuery.eq('status', 'approved');
-      }
-      const results = await Promise.all([
-        productQuery,
-        adQuery,
-        db.from('settings').select('key,value').in('key', ['instagram', 'contact', 'price'])
-      ]);
-      const productsResult = results[0], adsResult = results[1], settingsResult = results[2];
-      if (productsResult.error) throw productsResult.error;
-      if (adsResult.error) throw adsResult.error;
-      if (settingsResult.error) throw settingsResult.error;
-
-      const products = (productsResult.data || []).map(row => ({
-        id: row.id,
-        url: row.affiliate_url || row.product_url || '',
-        title: row.title || '',
-        image: row.image_url || null,
-        active: row.active !== false,
-        price: row.price,
-        description: row.description || '',
-        source: row.source || 'manual'
-      }));
-      const ads = (adsResult.data || []).map(row => ({
-        id: row.id,
-        advertiserName: row.advertiser_name || '',
-        contact: row.contact || '',
-        url: row.url || '',
-        title: row.title || '',
-        note: row.note || '',
-        image: row.image_url || null,
-        status: row.status || 'pending',
-        createdAt: row.created_at
-      }));
-      const settings = Object.assign({}, DEFAULT_SETTINGS);
-      (settingsResult.data || []).forEach(row => {
-        settings[row.key] = typeof row.value === 'string' ? row.value : (row.value == null ? '' : String(row.value));
-      });
-      siteData = { products: products.length ? products : [], ads: ads, settings: settings };
-      renderProducts();
-      renderSponsored();
-      updateInstagramLink();
-      updateAdInfo();
-      if (adminMode) {
-        loadSettings();
-        renderProductList();
-        renderAdList();
-      }
-      return siteData;
-    }
-
     async function compressImageForStorage(dataUrl) {
       if (!dataUrl || !/^data:image\//i.test(dataUrl)) return null;
       return new Promise(resolve => {
