@@ -118,6 +118,972 @@
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.error { background: var(--stamp); }
 
+  .modal-overlay { position: fixed; inset: 0; background: rgba(42,33,24,0.55); display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; z-index: 100; overflow-y: auto; }
+  .modal-overlay[hidden] { display: none; }
+  .modal { background: var(--paper); border-radius: 12px; max-width: 640px; width: 100%; padding: 32px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
+  .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; line-height: 1; color: var(--ink-soft); padding: 6px; cursor: pointer; }
+  .modal-close:hover { color: var(--ink); }
+  .tabs { display: flex; gap: 4px; border-bottom: 1.5px solid var(--line); margin: 22px 0 24px; overflow-x: auto; }
+  .tab-btn { background: none; border: none; padding: 10px 16px; font-weight: 700; font-size: 14px; color: var(--ink-faint); border-bottom: 2px solid transparent; margin-bottom: -1.5px; white-space: nowrap; cursor: pointer; }
+  .tab-btn.active { color: var(--stamp); border-color: var(--stamp); }
+  .tab-panel[hidden] { display: none; }
+
+  .admin-row { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .admin-row:last-child { border-bottom: none; }
+  .admin-row-main { flex: 1; min-width: 0; }
+  .admin-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .icon-btn { background: none; border: 1px solid var(--line-strong); border-radius: 5px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); flex-shrink: 0; cursor: pointer; }
+  .icon-btn:hover { background: var(--paper-deep); }
+  .icon-btn.danger:hover { background: var(--stamp); color: #fff; border-color: var(--stamp); }
+  .status-stamp { display: inline-block; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 3px; border: 1.5px solid; transform: rotate(-2deg); text-transform: uppercase; }
+  .status-pending { color: var(--gold-deep); border-color: var(--gold); background: rgba(201,138,31,0.12); }
+  .status-approved { color: var(--approve); border-color: var(--approve); background: rgba(47,107,79,0.1); }
+  .status-rejected { color: var(--stamp); border-color: var(--stamp); background: rgba(178,58,46,0.1); }
+
+  .badge { display: inline-block; background: rgba(178,58,46,0.1); color: var(--stamp); padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 700; }
+
+  .help-box { background: rgba(201,138,31,0.1); border: 1px solid rgba(201,138,31,0.3); border-radius: 8px; padding: 16px; margin-bottom: 20px; font-size: 14px; color: var(--ink-soft); }
+  .help-box strong { color: var(--ink); }
+
+  .image-preview { width: 100%; max-width: 200px; height: 150px; background: var(--paper-deep); border-radius: 8px; object-fit: cover; margin-top: 8px; }
+  .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+  .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
+  .file-input-label { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(178,58,46,0.1); border: 2px dashed var(--stamp); border-radius: 8px; cursor: pointer; transition: background .15s ease; }
+  .file-input-label:hover { background: rgba(178,58,46,0.2); }
+
+  @media (max-width: 640px) {
+    .ad-form-grid { grid-template-columns: 1fr; }
+    .modal { padding: 24px 18px; }
+    .ad-panel { padding: 22px 18px; }
+    .hero p { font-size: 16px; }
+    .tabs { gap: 2px; }
+    .tab-btn { padding: 10px 12px; font-size: 12px; }
+  }
+  @media (max-width: 480px) {
+    .nav-links a:not(.btn) { display: none; }
+    .nav-inner { padding: 14px 16px; }
+    .wrap { padding: 0 16px; }
+    .hero { padding: 56px 0 38px; }
+    .btn { padding: 10px 18px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">Achados <span style="color:var(--stamp)">&amp;</span> Vendidos</div>
+      <div class="nav-links">
+        <a href="#achados">Achados</a>
+        <a href="#anuncie">Anuncie</a>
+        <a class="btn btn-primary btn-small" id="ig-follow-btn" href="https://instagram.com" target="_blank" rel="noopener noreferrer">📷 Seguir</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="hero-badge">🔥 Ofertas incríveis</span>
+      <h1>Achados &amp; Vendidos</h1>
+      <p>Produtos com os melhores preços do Mercado Livre.</p>
+      <div class="hero-ctas">
+        <a href="#achados" class="btn btn-primary">Ver achados</a>
+        <a id="ig-follow-btn-2" href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Seguir no Instagram →</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="achados">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Achados da semana</h2>
+        <span class="count-badge" id="product-count">— achados</span>
+      </div>
+      <p class="section-sub">Clique em qualquer produto pra ver no Mercado Livre.</p>
+      <div class="grid" id="products-grid">
+        <p style="color:var(--ink-faint); grid-column:1/-1;">Carregando achados…</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sponsored-section" hidden>
+    <div class="wrap">
+      <div class="section-head"><h2>⭐ Patrocinado</h2></div>
+      <p class="section-sub">Anúncios em destaque.</p>
+      <div class="grid" id="sponsored-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="anuncie">
+    <div class="wrap">
+      <div class="section-head"><h2>Anuncie aqui</h2></div>
+      <p class="section-sub">Quer colocar seu produto em destaque? Envie uma solicitação!</p>
+
+      <div class="ad-panel">
+        <div class="help-box">
+          <strong>💡 Como funciona:</strong> Envie seus dados abaixo. Você receberá um WhatsApp confirmando se seu anúncio foi aprovado!
+        </div>
+
+        <div class="ad-info">
+          <div class="ad-info-item"><div class="label">💰 Valor</div><div class="value" id="ad-price-display">R$ 29,90</div></div>
+          <div class="ad-info-item"><div class="label">📅 Duração</div><div class="value">7 dias</div></div>
+          <div class="ad-info-item"><div class="label">📱 Contato</div><div class="value" id="ad-contact-display">—</div></div>
+        </div>
+
+        <form id="ad-request-form" novalidate>
+          <div class="ad-form-grid">
+            <div class="field" data-field="advertiserName">
+              <label for="ad-name">✏️ Seu nome</label>
+              <input id="ad-name" type="text" placeholder="Ex: João Silva">
+              <span class="field-error">Preciso do seu nome!</span>
+            </div>
+            <div class="field" data-field="contact">
+              <label for="ad-contact">📱 Seu WhatsApp</label>
+              <input id="ad-contact" type="text" placeholder="(11) 90000-0000">
+              <span class="field-error">Preciso de um WhatsApp!</span>
+            </div>
+          </div>
+          <div class="field" data-field="url">
+            <label for="ad-url">🔗 Link do produto (Mercado Livre)</label>
+            <input id="ad-url" type="text" placeholder="https://meli.la/ABC123">
+            <span class="field-error">Link inválido! Começa com https://</span>
+          </div>
+          <div class="field" data-field="title">
+            <label for="ad-title">📝 Título do anúncio</label>
+            <input id="ad-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+            <span class="field-error">Preciso de um título!</span>
+          </div>
+          <div class="field">
+            <label for="ad-note">💬 Descrição (opcional)</label>
+            <textarea id="ad-note" rows="3" placeholder="Ex: Impecável, primeira mão..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">📤 Enviar solicitação</button>
+        </form>
+        <div id="ad-confirmation" class="empty-state" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>Achados &amp; Vendidos © 2026</div>
+      <p style="font-size: 12px; margin-top: 8px;">Não somos afiliados do Mercado Livre. Apenas curadores de ofertas.</p>
+      <button class="btn-ghost" id="open-admin-btn" type="button" style="margin-top: 12px;">🔐 Painel Admin</button>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-overlay" id="admin-overlay" hidden role="dialog" aria-modal="true">
+    <div class="modal" id="admin-modal">
+      <button class="modal-close" id="close-admin-btn" type="button">×</button>
+
+      <div id="admin-login-view">
+        <h3>🔐 Painel do Administrador</h3>
+        <p class="section-sub">Entre com seu e-mail e senha de administrador cadastrados no Supabase.</p>
+        <form id="admin-login-form" novalidate style="margin-top:20px;">
+          <div class="field" data-field="email">
+            <label for="login-email">E-mail</label>
+            <input id="login-email" type="email" autocomplete="username" placeholder="voce@exemplo.com">
+            <span class="field-error">Digite um e-mail válido!</span>
+          </div>
+          <div class="field" data-field="passcode">
+            <label for="login-passcode">Senha</label>
+            <input id="login-passcode" type="password" autocomplete="current-password" placeholder="••••••">
+            <span class="field-error">Digite a senha!</span>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+        </form>
+      </div>
+
+      <div id="admin-panel-view" hidden>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 20px;">
+          <h3 style="font-size:20px; margin: 0;">🎛️ Painel Admin</h3>
+          <button class="btn-ghost" id="admin-logout-btn" type="button">Sair</button>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="products" type="button">📦 Produtos</button>
+          <button class="tab-btn" data-tab="ads" type="button">⭐ Anúncios</button>
+          <button class="tab-btn" data-tab="settings" type="button">⚙️ Config</button>
+        </div>
+
+        <div class="tab-panel" data-tab-panel="products">
+          <div class="help-box">
+            <strong>💡 Dica:</strong> Cole o link do Mercado Livre, dê um nome e escolha uma foto. Pronto!
+          </div>
+
+          <form id="add-product-form" novalidate style="background: rgba(47,107,79,0.05); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+            <h4 style="margin-bottom: 14px;">➕ Adicionar novo produto</h4>
+            <div class="field" data-field="url">
+              <label for="new-product-url">🔗 Link do Mercado Livre</label>
+              <input id="new-product-url" type="text" placeholder="https://meli.la/...">
+              <span class="field-error">Link inválido!</span>
+            </div>
+            <div class="field" data-field="title">
+              <label for="new-product-title">📝 Nome do produto</label>
+              <input id="new-product-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+              <span class="field-error">Precisa de um nome!</span>
+            </div>
+            <div class="field">
+              <label for="new-product-image">📸 Foto do produto</label>
+              <div class="file-input-wrapper">
+                <input id="new-product-image" type="file" ae; }
+  .admin-row-main { flex: 1; min-width: 0; }
+  .admin-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .icon-btn { background: none; border: 1px solid var(--line-strong); border-radius: 5px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); flex-shrink: 0; cursor: pointer; }
+  .icon-btn:hover { background: var(--paper-deep); }
+  .icon-btn.danger:hover { background: var(--stamp); color: #fff; border-color: var(--stamp); }
+  .status-stamp { display: inline-block; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 3px; border: 1.5px solid; transform: rotate(-2deg); text-transform: uppercase; }
+  .status-pending { color: var(--gold-deep); border-color: var(--gold); background: rgba(201,138,31,0.12); }
+  .status-approved { color: var(--approve); border-color: var(--approve); background: rgba(47,107,79,0.1); }
+  .status-rejected { color: var(--stamp); border-color: var(--stamp); background: rgba(178,58,46,0.1); }
+
+  .badge { display: inline-block; background: rgba(178,58,46,0.1); color: var(--stamp); padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 700; }
+
+  .help-box { background: rgba(201,138,31,0.1); border: 1px solid rgba(201,138,31,0.3); border-radius: 8px; padding: 16px; margin-bottom: 20px; font-size: 14px; color: var(--ink-soft); }
+  .help-box strong { color: var(--ink); }
+
+  .image-preview { width: 100%; max-width: 200px; height: 150px; background: var(--paper-deep); border-radius: 8px; object-fit: cover; margin-top: 8px; }
+  .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+  .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
+  .file-input-label { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(178,58,46,0.1); border: 2px dashed var(--stamp); border-radius: 8px; cursor: pointer; transition: background .15s ease; }
+  .file-input-label:hover { background: rgba(178,58,46,0.2); }
+
+  @media (max-width: 640px) {
+    .ad-form-grid { grid-template-columns: 1fr; }
+    .modal { padding: 24px 18px; }
+    .ad-panel { padding: 22px 18px; }
+    .hero p { font-size: 16px; }
+    .tabs { gap: 2px; }
+    .tab-btn { padding: 10px 12px; font-size: 12px; }
+  }
+  @media (max-width: 480px) {
+    .nav-links a:not(.btn) { display: none; }
+    .nav-inner { padding: 14px 16px; }
+    .wrap { padding: 0 16px; }
+    .hero { padding: 56px 0 38px; }
+    .btn { padding: 10px 18px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">Achados <span style="color:var(--stamp)">&amp;</span> Vendidos</div>
+      <div class="nav-links">
+        <a href="#achados">Achados</a>
+        <a href="#anuncie">Anuncie</a>
+        <a class="btn btn-primary btn-small" id="ig-follow-btn" href="https://instagram.com" target="_blank" rel="noopener noreferrer">📷 Seguir</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="hero-badge">🔥 Ofertas incríveis</span>
+      <h1>Achados &amp; Vendidos</h1>
+      <p>Produtos com os melhores preços do Mercado Livre.</p>
+      <div class="hero-ctas">
+        <a href="#achados" class="btn btn-primary">Ver achados</a>
+        <a id="ig-follow-btn-2" href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Seguir no Instagram →</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="achados">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Achados da semana</h2>
+        <span class="count-badge" id="product-count">— achados</span>
+      </div>
+      <p class="section-sub">Clique em qualquer produto pra ver no Mercado Livre.</p>
+      <div class="grid" id="products-grid">
+        <p style="color:var(--ink-faint); grid-column:1/-1;">Carregando achados…</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sponsored-section" hidden>
+    <div class="wrap">
+      <div class="section-head"><h2>⭐ Patrocinado</h2></div>
+      <p class="section-sub">Anúncios em destaque.</p>
+      <div class="grid" id="sponsored-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="anuncie">
+    <div class="wrap">
+      <div class="section-head"><h2>Anuncie aqui</h2></div>
+      <p class="section-sub">Quer colocar seu produto em destaque? Envie uma solicitação!</p>
+      
+      <div class="ad-panel">
+        <div class="help-box">
+          <strong>💡 Como funciona:</strong> Envie seus dados abaixo. Você receberá um WhatsApp confirmando se seu anúncio foi aprovado!
+        </div>
+
+        <div class="ad-info">
+          <div class="ad-info-item"><div class="label">💰 Valor</div><div class="value" id="ad-price-display">R$ 29,90</div></div>
+          <div class="ad-info-item"><div class="label">📅 Duração</div><div class="value">7 dias</div></div>
+          <div class="ad-info-item"><div class="label">📱 Contato</div><div class="value" id="ad-contact-display">—</div></div>
+        </div>
+
+        <form id="ad-request-form" novalidate>
+          <div class="ad-form-grid">
+            <div class="field" data-field="advertiserName">
+              <label for="ad-name">✏️ Seu nome</label>
+              <input id="ad-name" type="text" placeholder="Ex: João Silva">
+              <span class="field-error">Preciso do seu nome!</span>
+            </div>
+            <div class="field" data-field="contact">
+              <label for="ad-contact">📱 Seu WhatsApp</label>
+              <input id="ad-contact" type="text" placeholder="(11) 90000-0000">
+              <span class="field-error">Preciso de um WhatsApp!</span>
+            </div>
+          </div>
+          <div class="field" data-field="url">
+            <label for="ad-url">🔗 Link do produto (Mercado Livre)</label>
+            <input id="ad-url" type="text" placeholder="https://meli.la/ABC123">
+            <span class="field-error">Link inválido! Começa com https://</span>
+          </div>
+          <div class="field" data-field="title">
+            <label for="ad-title">📝 Título do anúncio</label>
+            <input id="ad-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+            <span class="field-error">Preciso de um título!</span>
+          </div>
+          <div class="field">
+            <label for="ad-note">💬 Descrição (opcional)</label>
+            <textarea id="ad-note" rows="3" placeholder="Ex: Impecável, primeira mão..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">📤 Enviar solicitação</button>
+        </form>
+        <div id="ad-confirmation" class="empty-state" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>Achados &amp; Vendidos © 2026</div>
+      <p style="font-size: 12px; margin-top: 8px;">Não somos afiliados do Mercado Livre. Apenas curadores de ofertas.</p>
+      <button class="btn-ghost" id="open-admin-btn" type="button" style="margin-top: 12px;">🔐 Painel Admin</button>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-overlay" id="admin-overlay" hidden role="dialog" aria-modal="true">
+    <div class="modal" id="admin-modal">
+      <button class="modal-close" id="close-admin-btn" type="button">×</button>
+
+      <div id="admin-login-view">
+        <h3>🔐 Painel do Administrador</h3>
+        <p class="section-sub">Digite a senha para acessar.</p>
+        <form id="admin-login-form" novalidate style="margin-top:20px;">
+          <div class="field" data-field="passcode">
+            <label for="login-passcode">Senha</label>
+            <input id="login-passcode" type="password" autocomplete="current-password" placeholder="••••••">
+            <span class="field-error">Digite a senha!</span>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+        </form>
+      </div>
+
+      <div id="admin-panel-view" hidden>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 20px;">
+          <h3 style="font-size:20px; margin: 0;">🎛️ Painel Admin</h3>
+          <button class="btn-ghost" id="admin-logout-btn" type="button">Sair</button>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="products" type="button">📦 Produtos</button>
+          <button class="tab-btn" data-tab="ads" type="button">⭐ Anúncios</button>
+          <button class="tab-btn" data-tab="settings" type="button">⚙️ Config</button>
+        </div>
+
+        <div class="tab-panel" data-tab-panel="products">
+          <div class="help-box">
+            <strong>💡 Dica:</strong> Cole o link do Mercado Livre, dê um nome e escolha uma foto. Pronto!
+          </div>
+
+          <form id="add-product-form" novalidate style="background: rgba(47,107,79,0.05); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+            <h4 style="margin-bottom: 14px;">➕ Adicionar novo produto</h4>
+            <div class="field" data-field="url">
+              <label for="new-product-url">🔗 Link do Mercado Livre</label>
+              <input id="new-product-url" type="text" placeholder="https://meli.la/...">
+              <span class="field-error">Link inválido!</span>
+            </div>
+            <div class="field" data-field="title">
+              <label for="new-product-title">📝 Nome do produto</label>
+              <input id="new-product-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+              <span class="field-error">Precisa de um nome!</span>
+            </div>
+            <div class="field">
+              <label for="new-product-image">📸 Foto do produto</label>
+              <div class="file-input-wrapper">
+                <input id="new-product-image" type=    background-image: radial-gradient(circle at 1px 1px, rgba(42,33,24,0.06) 1px, transparent 0);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; }
+  button { font-family: inherit; cursor: pointer; }
+  h1, h2, h3, h4 { margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: 0.01em; }
+  p { margin: 0; }
+
+  .nav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; max-width: 1120px; margin: 0 auto; gap: 16px; }
+  .brand { font-family: var(--font-display); font-size: 18px; }
+  .nav-links { display: flex; align-items: center; gap: 22px; }
+  .nav-links a:not(.btn) { text-decoration: none; font-size: 14px; font-weight: 700; color: var(--ink-soft); }
+  .nav-links a:not(.btn):hover { color: var(--ink); }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; border-radius: 999px; font-weight: 700; font-size: 14px; border: 1.5px solid transparent; text-decoration: none; transition: background .15s ease, color .15s ease, border-color .15s ease; }
+  .btn-primary { background: var(--stamp); color: var(--paper-card); }
+  .btn-primary:hover { background: var(--stamp-deep); }
+  .btn-outline { background: transparent; border-color: var(--ink); color: var(--ink); }
+  .btn-outline:hover { background: var(--ink); color: var(--paper); }
+  .btn-small { padding: 8px 16px; font-size: 12px; }
+  .btn-ghost { background: none; border: none; color: var(--ink-soft); text-decoration: underline; padding: 6px; font-weight: 700; font-size: 13px; cursor: pointer; }
+  .btn-ghost:hover { color: var(--ink); }
+
+  .hero { padding: 72px 0 52px; text-align: center; }
+  .hero-badge { display: inline-block; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-deep); background: rgba(201,138,31,0.14); border: 1px solid rgba(201,138,31,0.45); padding: 6px 14px; border-radius: 999px; margin-bottom: 22px; }
+  .hero h1 { font-size: clamp(38px, 8vw, 74px); color: var(--stamp); display: inline-block; transform: rotate(-1.4deg); line-height: 1; }
+  .hero p { max-width: 520px; margin: 22px auto 32px; font-size: 18px; color: var(--ink-soft); }
+  .hero-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  .section { padding: 52px 0; border-top: 1px solid var(--line); }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .section-head h2 { font-size: 26px; }
+  .count-badge { font-family: var(--font-mono); font-size: 13px; color: var(--ink-faint); }
+  .section-sub { color: var(--ink-soft); margin-top: 8px; max-width: 560px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 22px; margin-top: 28px; }
+  .product-card { position: relative; background: var(--paper-card); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-card); transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
+  .product-card:nth-child(3n) { transform: rotate(-1deg); }
+  .product-card:nth-child(3n+1) { transform: rotate(0.6deg); }
+  .product-card:nth-child(3n+2) { transform: rotate(-0.3deg); }
+  .product-card:hover { transform: rotate(0deg) translateY(-4px); box-shadow: var(--shadow-hover); }
+  .product-image { width: 100%; height: 180px; background: linear-gradient(135deg, rgba(201,138,31,0.1) 0%, rgba(178,58,46,0.08) 100%); display: flex; align-items: center; justify-content: center; font-size: 48px; }
+  .product-image img { width: 100%; height: 100%; object-fit: cover; }
+  .product-info { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+  .product-title { font-weight: 700; font-size: 16px; margin-bottom: 8px; line-height: 1.3; }
+  .product-note { font-size: 13px; color: var(--ink-soft); margin-bottom: 12px; }
+  .product-price { font-weight: 700; color: var(--stamp); margin-bottom: 8px; }
+  .product-footer { display: flex; gap: 8px; margin-top: auto; }
+  .product-link a { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; font-size: 12px; color: var(--paper-card); background: var(--stamp); padding: 10px 16px; border-radius: 5px; text-decoration: none; transition: background .15s ease; }
+  .product-link a:hover { background: var(--stamp-deep); }
+
+  .sponsor-badge { position: absolute; top: -9px; right: 12px; background: var(--gold); color: #2A1D06; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; transform: rotate(2deg); box-shadow: 0 2px 5px rgba(0,0,0,0.18); }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--ink-faint); border: 1.5px dashed var(--line-strong); border-radius: 10px; margin-top: 28px; }
+  .ad-panel { background: var(--paper-card); border: 1px solid var(--line); border-radius: 10px; padding: 32px; margin-top: 24px; }
+  .ad-info { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 30px; padding-bottom: 26px; border-bottom: 1.5px dashed var(--line-strong); }
+  .ad-info-item { flex: 1; min-width: 180px; }
+  .ad-info-item .label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 4px; }
+  .ad-info-item .value { font-weight: 700; font-size: 15px; }
+  .ad-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field label { font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+  .field input, .field textarea, .field select { font-family: var(--font-body); font-size: 15px; padding: 11px 13px; border-radius: 5px; border: 1.5px solid var(--line-strong); background: var(--paper-card); color: var(--ink); width: 100%; }
+  .field textarea { resize: vertical; }
+  .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--stamp); box-shadow: 0 0 0 3px rgba(178,58,46,0.15); }
+  .field-error { font-size: 12px; color: var(--stamp); display: none; }
+  .field.has-error input, .field.has-error textarea, .field.has-error select { border-color: var(--stamp); }
+  .field.has-error .field-error { display: block; }
+
+  .footer { padding: 40px 0 60px; text-align: center; color: var(--ink-faint); font-size: 13px; }
+  .footer > .wrap > div:first-child { font-family: var(--font-display); font-size: 15px; color: var(--ink-soft); margin-bottom: 6px; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--paper); padding: 12px 22px; border-radius: 8px; font-size: 14px; font-weight: 700; opacity: 0; pointer-events: none; transition: all .25s ease; z-index: 200; max-width: 90vw; text-align: center; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { background: var(--stamp); }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(42,33,24,0.55); display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; z-index: 100; overflow-y: auto; }
+  .modal-overlay[hidden] { display: none; }
+  .modal { background: var(--paper); border-radius: 12px; max-width: 640px; width: 100%; padding: 32px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
+  .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 24px; line-height: 1; color: var(--ink-soft); padding: 6px; cursor: pointer; }
+  .modal-close:hover { color: var(--ink); }
+  .tabs { display: flex; gap: 4px; border-bottom: 1.5px solid var(--line); margin: 22px 0 24px; overflow-x: auto; }
+  .tab-btn { background: none; border: none; padding: 10px 16px; font-weight: 700; font-size: 14px; color: var(--ink-faint); border-bottom: 2px solid transparent; margin-bottom: -1.5px; white-space: nowrap; cursor: pointer; }
+  .tab-btn.active { color: var(--stamp); border-color: var(--stamp); }
+  .tab-panel[hidden] { display: none; }
+
+  .admin-row { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .admin-row:last-child { border-bottom: none; }
+  .admin-row-main { flex: 1; min-width: 0; }
+  .admin-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .icon-btn { background: none; border: 1px solid var(--line-strong); border-radius: 5px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); flex-shrink: 0; cursor: pointer; }
+  .icon-btn:hover { background: var(--paper-deep); }
+  .icon-btn.danger:hover { background: var(--stamp); color: #fff; border-color: var(--stamp); }
+  .status-stamp { display: inline-block; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 3px; border: 1.5px solid; transform: rotate(-2deg); text-transform: uppercase; }
+  .status-pending { color: var(--gold-deep); border-color: var(--gold); background: rgba(201,138,31,0.12); }
+  .status-approved { color: var(--approve); border-color: var(--approve); background: rgba(47,107,79,0.1); }
+  .status-rejected { color: var(--stamp); border-color: var(--stamp); background: rgba(178,58,46,0.1); }
+
+  .badge { display: inline-block; background: rgba(178,58,46,0.1); color: var(--stamp); padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 700; }
+
+  .help-box { background: rgba(201,138,31,0.1); border: 1px solid rgba(201,138,31,0.3); border-radius: 8px; padding: 16px; margin-bottom: 20px; font-size: 14px; color: var(--ink-soft); }
+  .help-box strong { color: var(--ink); }
+
+  .image-preview { width: 100%; max-width: 200px; height: 150px; background: var(--paper-deep); border-radius: 8px; object-fit: cover; margin-top: 8px; }
+  .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+  .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
+  .file-input-label { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(178,58,46,0.1); border: 2px dashed var(--stamp); border-radius: 8px; cursor: pointer; transition: background .15s ease; }
+  .file-input-label:hover { background: rgba(178,58,46,0.2); }
+
+  @media (max-width: 640px) {
+    .ad-form-grid { grid-template-columns: 1fr; }
+    .modal { padding: 24px 18px; }
+    .ad-panel { padding: 22px 18px; }
+    .hero p { font-size: 16px; }
+    .tabs { gap: 2px; }
+    .tab-btn { padding: 10px 12px; font-size: 12px; }
+  }
+  @media (max-width: 480px) {
+    .nav-links a:not(.btn) { display: none; }
+    .nav-inner { padding: 14px 16px; }
+    .wrap { padding: 0 16px; }
+    .hero { padding: 56px 0 38px; }
+    .btn { padding: 10px 18px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">Achados <span style="color:var(--stamp)">&amp;</span> Vendidos</div>
+      <div class="nav-links">
+        <a href="#achados">Achados</a>
+        <a href="#anuncie">Anuncie</a>
+        <a class="btn btn-primary btn-small" id="ig-follow-btn" href="https://instagram.com" target="_blank" rel="noopener noreferrer">📷 Seguir</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="hero-badge">🔥 Ofertas incríveis</span>
+      <h1>Achados &amp; Vendidos</h1>
+      <p>Produtos com os melhores preços do Mercado Livre.</p>
+      <div class="hero-ctas">
+        <a href="#achados" class="btn btn-primary">Ver achados</a>
+        <a id="ig-follow-btn-2" href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Seguir no Instagram →</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="achados">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Achados da semana</h2>
+        <span class="count-badge" id="product-count">— achados</span>
+      </div>
+      <p class="section-sub">Clique em qualquer produto pra ver no Mercado Livre.</p>
+      <div class="grid" id="products-grid">
+        <p style="color:var(--ink-faint); grid-column:1/-1;">Carregando achados…</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sponsored-section" hidden>
+    <div class="wrap">
+      <div class="section-head"><h2>⭐ Patrocinado</h2></div>
+      <p class="section-sub">Anúncios em destaque.</p>
+      <div class="grid" id="sponsored-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="anuncie">
+    <div class="wrap">
+      <div class="section-head"><h2>Anuncie aqui</h2></div>
+      <p class="section-sub">Quer colocar seu produto em destaque? Envie uma solicitação!</p>
+
+      <div class="ad-panel">
+        <div class="help-box">
+          <strong>💡 Como funciona:</strong> Envie seus dados abaixo. Você receberá um WhatsApp confirmando se seu anúncio foi aprovado!
+        </div>
+
+        <div class="ad-info">
+          <div class="ad-info-item"><div class="label">💰 Valor</div><div class="value" id="ad-price-display">R$ 29,90</div></div>
+          <div class="ad-info-item"><div class="label">📅 Duração</div><div class="value">7 dias</div></div>
+          <div class="ad-info-item"><div class="label">📱 Contato</div><div class="value" id="ad-contact-display">—</div></div>
+        </div>
+
+        <form id="ad-request-form" novalidate>
+          <div class="ad-form-grid">
+            <div class="field" data-field="advertiserName">
+              <label for="ad-name">✏️ Seu nome</label>
+              <input id="ad-name" type="text" placeholder="Ex: João Silva">
+              <span class="field-error">Preciso do seu nome!</span>
+            </div>
+            <div class="field" data-field="contact">
+              <label for="ad-contact">📱 Seu WhatsApp</label>
+              <input id="ad-contact" type="text" placeholder="(11) 90000-0000">
+              <span class="field-error">Preciso de um WhatsApp!</span>
+            </div>
+          </div>
+          <div class="field" data-field="url">
+            <label for="ad-url">🔗 Link do produto (Mercado Livre)</label>
+            <input id="ad-url" type="text" placeholder="https://meli.la/ABC123">
+            <span class="field-error">Link inválido! Começa com https://</span>
+          </div>
+          <div class="field" data-field="title">
+            <label for="ad-title">📝 Título do anúncio</label>
+            <input id="ad-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+            <span class="field-error">Preciso de um título!</span>
+          </div>
+          <div class="field">
+            <label for="ad-note">💬 Descrição (opcional)</label>
+            <textarea id="ad-note" rows="3" placeholder="Ex: Impecável, primeira mão..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">📤 Enviar solicitação</button>
+        </form>
+        <div id="ad-confirmation" class="empty-state" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>Achados &amp; Vendidos © 2026</div>
+      <p style="font-size: 12px; margin-top: 8px;">Não somos afiliados do Mercado Livre. Apenas curadores de ofertas.</p>
+      <button class="btn-ghost" id="open-admin-btn" type="button" style="margin-top: 12px;">🔐 Painel Admin</button>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-overlay" id="admin-overlay" hidden role="dialog" aria-modal="true">
+    <div class="modal" id="admin-modal">
+      <button class="modal-close" id="close-admin-btn" type="button">×</button>
+
+      <div id="admin-login-view">
+        <h3>🔐 Painel do Administrador</h3>
+        <p class="section-sub">Digite a senha para acessar.</p>
+        <form id="admin-login-form" novalidate style="margin-top:20px;">
+          <div class="field" data-field="passcode">
+            <label for="login-passcode">Senha</label>
+            <input id="login-passcode" type="password" autocomplete="current-password" placeholder="••••••">
+            <span class="field-error">Digite a senha!</span>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+        </form>
+      </div>
+
+      <div id="admin-panel-view" hidden>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 20px;">
+          <h3 style="font-size:20px; margin: 0;">🎛️ Painel Admin</h3>
+          <button class="btn-ghost" id="admin-logout-btn" type="button">Sair</button>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="products" type="button">📦 Produtos</button>
+          <button class="tab-btn" data-tab="ads" type="button">⭐ Anúncios</button>
+          <button class="tab-btn" data-tab="settings" type="button">⚙️ Config</button>
+        </div>
+
+        <div class="tab-panel" data-tab-panel="products">
+          <div class="help-box">
+            <strong>💡 Dica:</strong> Cole o link do Mercado Livre, dê um nome e escolha uma foto. Pronto!
+          </div>
+
+          <form id="add-product-form" novalidate style="background: rgba(47,107,79,0.05); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+            <h4 style="margin-bottom: 14px;">➕ Adicionar novo produto</h4>
+            <div class="field" data-field="url">
+              <label for="new-product-url">🔗 Link do Mercado Livre</label>
+              <input id="new-product-url" type="text" placeholder="https://meli.la/...">
+              <span class="field-error">Link inválido!</span>
+            </div>
+            <div class="field" data-field="title">
+              <label for="new-product-title">📝 Nome do produto</label>
+              <input id="new-product-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+              <span class="field-error">Precisa de um nome!</span>
+            </div>
+            <div class="field">
+              <label for="new-product-image">📸 Foto do produto</label>
+              <div class="file-input-wrapper">
+                <input id="new-product-image" type="file" a }
+  .admin-row-main { flex: 1; min-width: 0; }
+  .admin-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .icon-btn { background: none; border: 1px solid var(--line-strong); border-radius: 5px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); flex-shrink: 0; cursor: pointer; }
+  .icon-btn:hover { background: var(--paper-deep); }
+  .icon-btn.danger:hover { background: var(--stamp); color: #fff; border-color: var(--stamp); }
+  .status-stamp { display: inline-block; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 3px; border: 1.5px solid; transform: rotate(-2deg); text-transform: uppercase; }
+  .status-pending { color: var(--gold-deep); border-color: var(--gold); background: rgba(201,138,31,0.12); }
+  .status-approved { color: var(--approve); border-color: var(--approve); background: rgba(47,107,79,0.1); }
+  .status-rejected { color: var(--stamp); border-color: var(--stamp); background: rgba(178,58,46,0.1); }
+
+  .badge { display: inline-block; background: rgba(178,58,46,0.1); color: var(--stamp); padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 700; }
+
+  .help-box { background: rgba(201,138,31,0.1); border: 1px solid rgba(201,138,31,0.3); border-radius: 8px; padding: 16px; margin-bottom: 20px; font-size: 14px; color: var(--ink-soft); }
+  .help-box strong { color: var(--ink); }
+
+  .image-preview { width: 100%; max-width: 200px; height: 150px; background: var(--paper-deep); border-radius: 8px; object-fit: cover; margin-top: 8px; }
+  .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+  .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
+  .file-input-label { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(178,58,46,0.1); border: 2px dashed var(--stamp); border-radius: 8px; cursor: pointer; transition: background .15s ease; }
+  .file-input-label:hover { background: rgba(178,58,46,0.2); }
+
+  @media (max-width: 640px) {
+    .ad-form-grid { grid-template-columns: 1fr; }
+    .modal { padding: 24px 18px; }
+    .ad-panel { padding: 22px 18px; }
+    .hero p { font-size: 16px; }
+    .tabs { gap: 2px; }
+    .tab-btn { padding: 10px 12px; font-size: 12px; }
+  }
+  @media (max-width: 480px) {
+    .nav-links a:not(.btn) { display: none; }
+    .nav-inner { padding: 14px 16px; }
+    .wrap { padding: 0 16px; }
+    .hero { padding: 56px 0 38px; }
+    .btn { padding: 10px 18px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">Achados <span style="color:var(--stamp)">&amp;</span> Vendidos</div>
+      <div class="nav-links">
+        <a href="#achados">Achados</a>
+        <a href="#anuncie">Anuncie</a>
+        <a class="btn btn-primary btn-small" id="ig-follow-btn" href="https://instagram.com" target="_blank" rel="noopener noreferrer">📷 Seguir</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="hero-badge">🔥 Ofertas incríveis</span>
+      <h1>Achados &amp; Vendidos</h1>
+      <p>Produtos com os melhores preços do Mercado Livre.</p>
+      <div class="hero-ctas">
+        <a href="#achados" class="btn btn-primary">Ver achados</a>
+        <a id="ig-follow-btn-2" href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Seguir no Instagram →</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="achados">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Achados da semana</h2>
+        <span class="count-badge" id="product-count">— achados</span>
+      </div>
+      <p class="section-sub">Clique em qualquer produto pra ver no Mercado Livre.</p>
+      <div class="grid" id="products-grid">
+        <p style="color:var(--ink-faint); grid-column:1/-1;">Carregando achados…</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sponsored-section" hidden>
+    <div class="wrap">
+      <div class="section-head"><h2>⭐ Patrocinado</h2></div>
+      <p class="section-sub">Anúncios em destaque.</p>
+      <div class="grid" id="sponsored-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="anuncie">
+    <div class="wrap">
+      <div class="section-head"><h2>Anuncie aqui</h2></div>
+      <p class="section-sub">Quer colocar seu produto em destaque? Envie uma solicitação!</p>
+
+      <div class="ad-panel">
+        <div class="help-box">
+          <strong>💡 Como funciona:</strong> Envie seus dados abaixo. Você receberá um WhatsApp confirmando se seu anúncio foi aprovado!
+        </div>
+
+        <div class="ad-info">
+          <div class="ad-info-item"><div class="label">💰 Valor</div><div class="value" id="ad-price-display">R$ 29,90</div></div>
+          <div class="ad-info-item"><div class="label">📅 Duração</div><div class="value">7 dias</div></div>
+          <div class="ad-info-item"><div class="label">📱 Contato</div><div class="value" id="ad-contact-display">—</div></div>
+        </div>
+
+        <form id="ad-request-form" novalidate>
+          <div class="ad-form-grid">
+            <div class="field" data-field="advertiserName">
+              <label for="ad-name">✏️ Seu nome</label>
+              <input id="ad-name" type="text" placeholder="Ex: João Silva">
+              <span class="field-error">Preciso do seu nome!</span>
+            </div>
+            <div class="field" data-field="contact">
+              <label for="ad-contact">📱 Seu WhatsApp</label>
+              <input id="ad-contact" type="text" placeholder="(11) 90000-0000">
+              <span class="field-error">Preciso de um WhatsApp!</span>
+            </div>
+          </div>
+          <div class="field" data-field="url">
+            <label for="ad-url">🔗 Link do produto (Mercado Livre)</label>
+            <input id="ad-url" type="text" placeholder="https://meli.la/ABC123">
+            <span class="field-error">Link inválido! Começa com https://</span>
+          </div>
+          <div class="field" data-field="title">
+            <label for="ad-title">📝 Título do anúncio</label>
+            <input id="ad-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+            <span class="field-error">Preciso de um título!</span>
+          </div>
+          <div class="field">
+            <label for="ad-note">💬 Descrição (opcional)</label>
+            <textarea id="ad-note" rows="3" placeholder="Ex: Impecável, primeira mão..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">📤 Enviar solicitação</button>
+        </form>
+        <div id="ad-confirmation" class="empty-state" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>Achados &amp; Vendidos © 2026</div>
+      <p style="font-size: 12px; margin-top: 8px;">Não somos afiliados do Mercado Livre. Apenas curadores de ofertas.</p>
+      <button class="btn-ghost" id="open-admin-btn" type="button" style="margin-top: 12px;">🔐 Painel Admin</button>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-overlay" id="admin-overlay" hidden role="dialog" aria-modal="true">
+    <div class="modal" id="admin-modal">
+      <button class="modal-close" id="close-admin-btn" type="button">×</button>
+
+      <div id="admin-login-view">
+        <h3>🔐 Painel do Administrador</h3>
+        <p class="section-sub">Digite a senha para acessar.</p>
+        <form id="admin-login-form" novalidate style="margin-top:20px;">
+          <div class="field" data-field="passcode">
+            <label for="login-passcode">Senha</label>
+            <input id="login-passcode" type="password" autocomplete="current-password" placeholder="••••••">
+            <span class="field-error">Digite a senha!</span>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+        </form>
+      </div>
+
+      <div id="admin-panel-view" hidden>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 20px;">
+          <h3 style="font-size:20px; margin: 0;">🎛️ Painel Admin</h3>
+          <button class="btn-ghost" id="admin-logout-btn" type="button">Sair</button>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="products" type="button">📦 Produtos</button>
+          <button class="tab-btn" data-tab="ads" type="button">⭐ Anúncios</button>
+          <button class="tab-btn" data-tab="settings" type="button">⚙️ Config</button>
+        </div>
+
+        <div class="tab-panel" data-tab-panel="products">
+          <div class="help-box">
+            <strong>💡 Dica:</strong> Cole o link do Mercado Livre, dê um nome e escolha uma foto. Pronto!
+          </div>
+
+          <form id="add-product-form" novalidate style="background: rgba(47,107,79,0.05); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+            <h4 style="margin-bottom: 14px;">➕ Adicionar novo produto</h4>
+            <div class="field" data-field="url">
+              <label for="new-product-url">🔗 Link do Mercado Livre</label>
+              <input id="new-product-url" type="text" placeholder="https://meli.la/...">
+              <span class="field-error">Link inválido!</span>
+            </div>
+            <div class="field" data-field="title">
+              <label for="new-product-title">📝 Nome do produto</label>
+              <input id="new-product-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+              <span class="field-error">Precisa de um nome!</span>
+            </div>
+            <div class="field">
+              <label for="new-product-image">📸 Foto do produto</label>
+              <div class="file-input-wrapper">
+                <input id="new-product-image" type="file" a    background-image: radial-gradient(circle at 1px 1px, rgba(42,33,24,0.06) 1px, transparent 0);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; }
+  button { font-family: inherit; cursor: pointer; }
+  h1, h2, h3, h4 { margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: 0.01em; }
+  p { margin: 0; }
+
+  .nav { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid var(--line); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; max-width: 1120px; margin: 0 auto; gap: 16px; }
+  .brand { font-family: var(--font-display); font-size: 18px; }
+  .nav-links { display: flex; align-items: center; gap: 22px; }
+  .nav-links a:not(.btn) { text-decoration: none; font-size: 14px; font-weight: 700; color: var(--ink-soft); }
+  .nav-links a:not(.btn):hover { color: var(--ink); }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 22px; border-radius: 999px; font-weight: 700; font-size: 14px; border: 1.5px solid transparent; text-decoration: none; transition: background .15s ease, color .15s ease, border-color .15s ease; }
+  .btn-primary { background: var(--stamp); color: var(--paper-card); }
+  .btn-primary:hover { background: var(--stamp-deep); }
+  .btn-outline { background: transparent; border-color: var(--ink); color: var(--ink); }
+  .btn-outline:hover { background: var(--ink); color: var(--paper); }
+  .btn-small { padding: 8px 16px; font-size: 12px; }
+  .btn-ghost { background: none; border: none; color: var(--ink-soft); text-decoration: underline; padding: 6px; font-weight: 700; font-size: 13px; cursor: pointer; }
+  .btn-ghost:hover { color: var(--ink); }
+
+  .hero { padding: 72px 0 52px; text-align: center; }
+  .hero-badge { display: inline-block; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-deep); background: rgba(201,138,31,0.14); border: 1px solid rgba(201,138,31,0.45); padding: 6px 14px; border-radius: 999px; margin-bottom: 22px; }
+  .hero h1 { font-size: clamp(38px, 8vw, 74px); color: var(--stamp); display: inline-block; transform: rotate(-1.4deg); line-height: 1; }
+  .hero p { max-width: 520px; margin: 22px auto 32px; font-size: 18px; color: var(--ink-soft); }
+  .hero-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  .section { padding: 52px 0; border-top: 1px solid var(--line); }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .section-head h2 { font-size: 26px; }
+  .count-badge { font-family: var(--font-mono); font-size: 13px; color: var(--ink-faint); }
+  .section-sub { color: var(--ink-soft); margin-top: 8px; max-width: 560px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 22px; margin-top: 28px; }
+  .product-card { position: relative; background: var(--paper-card); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-card); transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease; }
+  .product-card:nth-child(3n) { transform: rotate(-1deg); }
+  .product-card:nth-child(3n+1) { transform: rotate(0.6deg); }
+  .product-card:nth-child(3n+2) { transform: rotate(-0.3deg); }
+  .product-card:hover { transform: rotate(0deg) translateY(-4px); box-shadow: var(--shadow-hover); }
+  .product-image { width: 100%; height: 180px; background: linear-gradient(135deg, rgba(201,138,31,0.1) 0%, rgba(178,58,46,0.08) 100%); display: flex; align-items: center; justify-content: center; font-size: 48px; }
+  .product-image img { width: 100%; height: 100%; object-fit: cover; }
+  .product-info { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+  .product-title { font-weight: 700; font-size: 16px; margin-bottom: 8px; line-height: 1.3; }
+  .product-note { font-size: 13px; color: var(--ink-soft); margin-bottom: 12px; }
+  .product-price { font-weight: 700; color: var(--stamp); margin-bottom: 8px; }
+  .product-footer { display: flex; gap: 8px; margin-top: auto; }
+  .product-link a { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; font-size: 12px; color: var(--paper-card); background: var(--stamp); padding: 10px 16px; border-radius: 5px; text-decoration: none; transition: background .15s ease; }
+  .product-link a:hover { background: var(--stamp-deep); }
+  
+  .sponsor-badge { position: absolute; top: -9px; right: 12px; background: var(--gold); color: #2A1D06; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; transform: rotate(2deg); box-shadow: 0 2px 5px rgba(0,0,0,0.18); }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--ink-faint); border: 1.5px dashed var(--line-strong); border-radius: 10px; margin-top: 28px; }
+  .ad-panel { background: var(--paper-card); border: 1px solid var(--line); border-radius: 10px; padding: 32px; margin-top: 24px; }
+  .ad-info { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 30px; padding-bottom: 26px; border-bottom: 1.5px dashed var(--line-strong); }
+  .ad-info-item { flex: 1; min-width: 180px; }
+  .ad-info-item .label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); margin-bottom: 4px; }
+  .ad-info-item .value { font-weight: 700; font-size: 15px; }
+  .ad-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field label { font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+  .field input, .field textarea, .field select { font-family: var(--font-body); font-size: 15px; padding: 11px 13px; border-radius: 5px; border: 1.5px solid var(--line-strong); background: var(--paper-card); color: var(--ink); width: 100%; }
+  .field textarea { resize: vertical; }
+  .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--stamp); box-shadow: 0 0 0 3px rgba(178,58,46,0.15); }
+  .field-error { font-size: 12px; color: var(--stamp); display: none; }
+  .field.has-error input, .field.has-error textarea, .field.has-error select { border-color: var(--stamp); }
+  .field.has-error .field-error { display: block; }
+
+  .footer { padding: 40px 0 60px; text-align: center; color: var(--ink-faint); font-size: 13px; }
+  .footer > .wrap > div:first-child { font-family: var(--font-display); font-size: 15px; color: var(--ink-soft); margin-bottom: 6px; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--paper); padding: 12px 22px; border-radius: 8px; font-size: 14px; font-weight: 700; opacity: 0; pointer-events: none; transition: all .25s ease; z-index: 200; max-width: 90vw; text-align: center; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { background: var(--stamp); }
 
   .modal-overlay { position: fixed; inset: 0; background: rgba(42,33,24,0.55); display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; z-index: 100; overflow-y: auto; }
   .modal-overlay[hidden] { display: none; }
@@ -239,7 +1205,6 @@
               <span class="field-error">Preciso do seu nome!</span>
             </div>
             <div class="field" data-field="contact">
-
               <label for="ad-contact">📱 Seu WhatsApp</label>
               <input id="ad-contact" type="text" placeholder="(11) 90000-0000">
               <span class="field-error">Preciso de um WhatsApp!</span>
@@ -282,8 +1247,382 @@
 
       <div id="admin-login-view">
         <h3>🔐 Painel do Administrador</h3>
-        <p class="section-sub">Entre com o e-mail e a senha da conta administradora.</p>
-        <label for="login-email">E-mail</label><input id="login-email" type="email" autocomplete="username" required placeholder="seu e-mail">
+        <p class="section-sub">Digite a senha para acessar.</p>
+        <form id="admin-login-form" novalidate style="margin-top:20px;">
+          <div class="field" data-field="passcode">
+            <label for="login-passcode">Senha</label>
+            <input id="login-passcode" type="password" autocomplete="current-password" placeholder="••••••">
+            <span class="field-error">Digite a senha!</span>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+        </form>
+      </div>
+
+      <div id="admin-panel-view" hidden>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 20px;">
+          <h3 style="font-size:20px; margin: 0;">🎛️ Painel Admin</h3>
+          <button class="btn-ghost" id="admin-logout-btn" type="button">Sair</button>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="products" type="button">📦 Produtos</button>
+          <button class="tab-btn" data-tab="ads" type="button">⭐ Anúncios</button>
+          <button class="tab-btn" data-tab="settings" type="button">⚙️ Config</button>
+        </div>
+
+        <div class="tab-panel" data-tab-panel="products">
+          <div class="help-box">
+            <strong>💡 Dica:</strong> Cole o link do Mercado Livre, dê um nome e escolha uma foto. Pronto!
+          </div>
+
+          <form id="add-product-form" novalidate style="background: rgba(47,107,79,0.05); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+            <h4 style="margin-bottom: 14px;">➕ Adicionar novo produto</h4>
+            <div class="field" data-field="url">
+              <label for="new-product-url">🔗 Link do Mercado Livre</label>
+              <input id="new-product-url" type="text" placeholder="https://meli.la/...">
+              <span class="field-error">Link inválido!</span>
+            </div>
+            <div class="field" data-field="title">
+              <label for="new-product-title">📝 Nome do produto</label>
+              <input id="new-product-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+              <span class="field-error">Precisa de um nome!</span>
+            </div>
+            <div class="field">
+              <label for="new-product-image">📸 Foto do produto</label>
+              <div class="file-input-wrapper">
+                <input id="new-product-image" type=e; }
+  .admin-row-main { flex: 1; min-width: 0; }
+  .admin-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .icon-btn { background: none; border: 1px solid var(--line-strong); border-radius: 5px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--ink-soft); flex-shrink: 0; cursor: pointer; }
+  .icon-btn:hover { background: var(--paper-deep); }
+  .icon-btn.danger:hover { background: var(--stamp); color: #fff; border-color: var(--stamp); }
+  .status-stamp { display: inline-block; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 3px; border: 1.5px solid; transform: rotate(-2deg); text-transform: uppercase; }
+  .status-pending { color: var(--gold-deep); border-color: var(--gold); background: rgba(201,138,31,0.12); }
+  .status-approved { color: var(--approve); border-color: var(--approve); background: rgba(47,107,79,0.1); }
+  .status-rejected { color: var(--stamp); border-color: var(--stamp); background: rgba(178,58,46,0.1); }
+
+  .badge { display: inline-block; background: rgba(178,58,46,0.1); color: var(--stamp); padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 700; }
+
+  .help-box { background: rgba(201,138,31,0.1); border: 1px solid rgba(201,138,31,0.3); border-radius: 8px; padding: 16px; margin-bottom: 20px; font-size: 14px; color: var(--ink-soft); }
+  .help-box strong { color: var(--ink); }
+
+  .image-preview { width: 100%; max-width: 200px; height: 150px; background: var(--paper-deep); border-radius: 8px; object-fit: cover; margin-top: 8px; }
+  .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+  .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
+  .file-input-label { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(178,58,46,0.1); border: 2px dashed var(--stamp); border-radius: 8px; cursor: pointer; transition: background .15s ease; }
+  .file-input-label:hover { background: rgba(178,58,46,0.2); }
+
+  @media (max-width: 640px) {
+    .ad-form-grid { grid-template-columns: 1fr; }
+    .modal { padding: 24px 18px; }
+    .ad-panel { padding: 22px 18px; }
+    .hero p { font-size: 16px; }
+    .tabs { gap: 2px; }
+    .tab-btn { padding: 10px 12px; font-size: 12px; }
+  }
+  @media (max-width: 480px) {
+    .nav-links a:not(.btn) { display: none; }
+    .nav-inner { padding: 14px 16px; }
+    .wrap { padding: 0 16px; }
+    .hero { padding: 56px 0 38px; }
+    .btn { padding: 10px 18px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">Achados <span style="color:var(--stamp)">&amp;</span> Vendidos</div>
+      <div class="nav-links">
+        <a href="#achados">Achados</a>
+        <a href="#anuncie">Anuncie</a>
+        <a class="btn btn-primary btn-small" id="ig-follow-btn" href="https://instagram.com" target="_blank" rel="noopener noreferrer">📷 Seguir</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="hero-badge">🔥 Ofertas incríveis</span>
+      <h1>Achados &amp; Vendidos</h1>
+      <p>Produtos com os melhores preços do Mercado Livre.</p>
+      <div class="hero-ctas">
+        <a href="#achados" class="btn btn-primary">Ver achados</a>
+        <a id="ig-follow-btn-2" href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Seguir no Instagram →</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="achados">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Achados da semana</h2>
+        <span class="count-badge" id="product-count">— achados</span>
+      </div>
+      <p class="section-sub">Clique em qualquer produto pra ver no Mercado Livre.</p>
+      <div class="grid" id="products-grid">
+        <p style="color:var(--ink-faint); grid-column:1/-1;">Carregando achados…</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sponsored-section" hidden>
+    <div class="wrap">
+      <div class="section-head"><h2>⭐ Patrocinado</h2></div>
+      <p class="section-sub">Anúncios em destaque.</p>
+      <div class="grid" id="sponsored-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="anuncie">
+    <div class="wrap">
+      <div class="section-head"><h2>Anuncie aqui</h2></div>
+      <p class="section-sub">Quer colocar seu produto em destaque? Envie uma solicitação!</p>
+      
+      <div class="ad-panel">
+        <div class="help-box">
+          <strong>💡 Como funciona:</strong> Envie seus dados abaixo. Você receberá um WhatsApp confirmando se seu anúncio foi aprovado!
+        </div>
+
+        <div class="ad-info">
+          <div class="ad-info-item"><div class="label">💰 Valor</div><div class="value" id="ad-price-display">R$ 29,90</div></div>
+          <div class="ad-info-item"><div class="label">📅 Duração</div><div class="value">7 dias</div></div>
+          <div class="ad-info-item"><div class="label">📱 Contato</div><div class="value" id="ad-contact-display">—</div></div>
+        </div>
+
+        <form id="ad-request-form" novalidate>
+          <div class="ad-form-grid">
+            <div class="field" data-field="advertiserName">
+              <label for="ad-name">✏️ Seu nome</label>
+              <input id="ad-name" type="text" placeholder="Ex: João Silva">
+              <span class="field-error">Preciso do seu nome!</span>
+            </div>
+            <div class="field" data-field="contact">
+              <label for="ad-contact">📱 Seu WhatsApp</label>
+              <input id="ad-contact" type="text" placeholder="(11) 90000-0000">
+              <span class="field-error">Preciso de um WhatsApp!</span>
+            </div>
+          </div>
+          <div class="field" data-field="url">
+            <label for="ad-url">🔗 Link do produto (Mercado Livre)</label>
+            <input id="ad-url" type="text" placeholder="https://meli.la/ABC123">
+            <span class="field-error">Link inválido! Começa com https://</span>
+          </div>
+          <div class="field" data-field="title">
+            <label for="ad-title">📝 Título do anúncio</label>
+            <input id="ad-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+            <span class="field-error">Preciso de um título!</span>
+          </div>
+          <div class="field">
+            <label for="ad-note">💬 Descrição (opcional)</label>
+            <textarea id="ad-note" rows="3" placeholder="Ex: Impecável, primeira mão..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">📤 Enviar solicitação</button>
+        </form>
+        <div id="ad-confirmation" class="empty-state" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>Achados &amp; Vendidos © 2026</div>
+      <p style="font-size: 12px; margin-top: 8px;">Não somos afiliados do Mercado Livre. Apenas curadores de ofertas.</p>
+      <button class="btn-ghost" id="open-admin-btn" type="button" style="margin-top: 12px;">🔐 Painel Admin</button>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-overlay" id="admin-overlay" hidden role="dialog" aria-modal="true">
+    <div class="modal" id="admin-modal">
+      <button class="modal-close" id="close-admin-btn" type="button">×</button>
+
+      <div id="admin-login-view">
+        <h3>🔐 Painel do Administrador</h3>
+        <p class="section-sub">Digite a senha para acessar.</p>
+        <form id="admin-login-form" novalidate style="margin-top:20px;">
+          <div class="field" data-field="passcode">
+            <label for="login-passcode">Senha</label>
+            <input id="login-passcode" type="password" autocomplete="current-password" placeholder="••••••">
+            <span class="field-error">Digite a senha!</span>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+        </form>
+      </div>
+
+      <div id="admin-panel-view" hidden>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 20px;">
+          <h3 style="font-size:20px; margin: 0;">🎛️ Painel Admin</h3>
+          <button class="btn-ghost" id="admin-logout-btn" type="button">Sair</button>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="products" type="button">📦 Produtos</button>
+          <button class="tab-btn" data-tab="ads" type="button">⭐ Anúncios</button>
+          <button class="tab-btn" data-tab="settings" type="button">⚙️ Config</button>
+        </div>
+
+        <div class="tab-panel" data-tab-panel="products">
+          <div class="help-box">
+            <strong>💡 Dica:</strong> Cole o link do Mercado Livre, dê um nome e escolha uma foto. Pronto!
+          </div>
+
+          <form id="add-product-form" novalidate style="background: rgba(47,107,79,0.05); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+            <h4 style="margin-bottom: 14px;">➕ Adicionar novo produto</h4>
+            <div class="field" data-field="url">
+              <label for="new-product-url">🔗 Link do Mercado Livre</label>
+              <input id="new-product-url" type="text" placeholder="https://meli.la/...">
+              <span class="field-error">Link inválido!</span>
+            </div>
+            <div class="field" data-field="title">
+              <label for="new-product-title">📝 Nome do produto</label>
+              <input id="new-product-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+              <span class="field-error">Precisa de um nome!</span>
+            </div>
+            <div class="field">
+              <label for="new-product-image">📸 Foto do produto</label>
+              <div class="file-input-wrapper">
+                <input id="new-product-image" type=padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 700; }
+
+  .help-box { background: rgba(201,138,31,0.1); border: 1px solid rgba(201,138,31,0.3); border-radius: 8px; padding: 16px; margin-bottom: 20px; font-size: 14px; color: var(--ink-soft); }
+  .help-box strong { color: var(--ink); }
+
+  .image-preview { width: 100%; max-width: 200px; height: 150px; background: var(--paper-deep); border-radius: 8px; object-fit: cover; margin-top: 8px; }
+  .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+  .file-input-wrapper input[type=file] { position: absolute; left: -9999px; }
+  .file-input-label { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: rgba(178,58,46,0.1); border: 2px dashed var(--stamp); border-radius: 8px; cursor: pointer; transition: background .15s ease; }
+  .file-input-label:hover { background: rgba(178,58,46,0.2); }
+
+  @media (max-width: 640px) {
+    .ad-form-grid { grid-template-columns: 1fr; }
+    .modal { padding: 24px 18px; }
+    .ad-panel { padding: 22px 18px; }
+    .hero p { font-size: 16px; }
+    .tabs { gap: 2px; }
+    .tab-btn { padding: 10px 12px; font-size: 12px; }
+  }
+  @media (max-width: 480px) {
+    .nav-links a:not(.btn) { display: none; }
+    .nav-inner { padding: 14px 16px; }
+    .wrap { padding: 0 16px; }
+    .hero { padding: 56px 0 38px; }
+    .btn { padding: 10px 18px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">Achados <span style="color:var(--stamp)">&amp;</span> Vendidos</div>
+      <div class="nav-links">
+        <a href="#achados">Achados</a>
+        <a href="#anuncie">Anuncie</a>
+        <a class="btn btn-primary btn-small" id="ig-follow-btn" href="https://instagram.com" target="_blank" rel="noopener noreferrer">📷 Seguir</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <span class="hero-badge">🔥 Ofertas incríveis</span>
+      <h1>Achados &amp; Vendidos</h1>
+      <p>Produtos com os melhores preços do Mercado Livre.</p>
+      <div class="hero-ctas">
+        <a href="#achados" class="btn btn-primary">Ver achados</a>
+        <a id="ig-follow-btn-2" href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Seguir no Instagram →</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="achados">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Achados da semana</h2>
+        <span class="count-badge" id="product-count">— achados</span>
+      </div>
+      <p class="section-sub">Clique em qualquer produto pra ver no Mercado Livre.</p>
+      <div class="grid" id="products-grid">
+        <p style="color:var(--ink-faint); grid-column:1/-1;">Carregando achados…</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sponsored-section" hidden>
+    <div class="wrap">
+      <div class="section-head"><h2>⭐ Patrocinado</h2></div>
+      <p class="section-sub">Anúncios em destaque.</p>
+      <div class="grid" id="sponsored-grid"></div>
+    </div>
+  </section>
+
+  <section class="section" id="anuncie">
+    <div class="wrap">
+      <div class="section-head"><h2>Anuncie aqui</h2></div>
+      <p class="section-sub">Quer colocar seu produto em destaque? Envie uma solicitação!</p>
+      
+      <div class="ad-panel">
+        <div class="help-box">
+          <strong>💡 Como funciona:</strong> Envie seus dados abaixo. Você receberá um WhatsApp confirmando se seu anúncio foi aprovado!
+        </div>
+
+        <div class="ad-info">
+          <div class="ad-info-item"><div class="label">💰 Valor</div><div class="value" id="ad-price-display">R$ 29,90</div></div>
+          <div class="ad-info-item"><div class="label">📅 Duração</div><div class="value">7 dias</div></div>
+          <div class="ad-info-item"><div class="label">📱 Contato</div><div class="value" id="ad-contact-display">—</div></div>
+        </div>
+
+        <form id="ad-request-form" novalidate>
+          <div class="ad-form-grid">
+            <div class="field" data-field="advertiserName">
+              <label for="ad-name">✏️ Seu nome</label>
+              <input id="ad-name" type="text" placeholder="Ex: João Silva">
+              <span class="field-error">Preciso do seu nome!</span>
+            </div>
+            <div class="field" data-field="contact">
+              <label for="ad-contact">📱 Seu WhatsApp</label>
+              <input id="ad-contact" type="text" placeholder="(11) 90000-0000">
+              <span class="field-error">Preciso de um WhatsApp!</span>
+            </div>
+          </div>
+          <div class="field" data-field="url">
+            <label for="ad-url">🔗 Link do produto (Mercado Livre)</label>
+            <input id="ad-url" type="text" placeholder="https://meli.la/ABC123">
+            <span class="field-error">Link inválido! Começa com https://</span>
+          </div>
+          <div class="field" data-field="title">
+            <label for="ad-title">📝 Título do anúncio</label>
+            <input id="ad-title" type="text" placeholder="Ex: iPhone 13 64GB Preto">
+            <span class="field-error">Preciso de um título!</span>
+          </div>
+          <div class="field">
+            <label for="ad-note">💬 Descrição (opcional)</label>
+            <textarea id="ad-note" rows="3" placeholder="Ex: Impecável, primeira mão..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">📤 Enviar solicitação</button>
+        </form>
+        <div id="ad-confirmation" class="empty-state" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>Achados &amp; Vendidos © 2026</div>
+      <p style="font-size: 12px; margin-top: 8px;">Não somos afiliados do Mercado Livre. Apenas curadores de ofertas.</p>
+      <button class="btn-ghost" id="open-admin-btn" type="button" style="margin-top: 12px;">🔐 Painel Admin</button>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="modal-overlay" id="admin-overlay" hidden role="dialog" aria-modal="true">
+    <div class="modal" id="admin-modal">
+      <button class="modal-close" id="close-admin-btn" type="button">×</button>
+
+      <div id="admin-login-view">
+        <h3>🔐 Painel do Administrador</h3>
+        <p class="section-sub">Digite a senha para acessar.</p>
         <form id="admin-login-form" novalidate style="margin-top:20px;">
           <div class="field" data-field="passcode">
             <label for="login-passcode">Senha</label>
@@ -360,7 +1699,6 @@
               <label for="settings-contact">📱 Seu WhatsApp (para anúncios)</label>
               <input id="settings-contact" type="text" placeholder="(11) 90000-0000">
             </div>
-
             <div class="field">
               <label for="settings-price">💰 Preço do anúncio em R$</label>
               <input id="settings-price" type="text" placeholder="29.90">
@@ -374,108 +1712,562 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-  const SUPABASE_URL = 'https://aefqeqaojtsucbmnamwd.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_odeu7vNperl6crymmKB5hA_3sZ9Cw1I';
-  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  let products = [], ads = [], settings = {instagram:'https://instagram.com',contact:'',price:'29.90'};
-  const $ = id => document.getElementById(id);
-  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  function toast(msg){ const el=$('toast'); if(el){el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3500);} }
-  function money(v){const n=Number(v);return Number.isFinite(n)?n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}):'';}
-  async function loadPublic(){
-    const [p,a,st]=await Promise.all([
-      db.from('products').select('*').eq('active',true).order('created_at',{ascending:false}),
-      db.from('ad_requests').select('*').eq('status','approved').order('created_at',{ascending:false}),
-      db.from('settings').select('key,value').in('key',['instagram','contact','price'])
-    ]);
-    if(p.error) console.error('Produtos:',p.error);
-    products=p.data||[];
-    ads=a.data||[];
-    (st.data||[]).forEach(x=>settings[x.key]=x.value);
-    renderProducts(); renderSponsored(); renderSettings();
-  }
-  function productCard(p){
-    const url=p.affiliate_url||p.product_url||'#';
-    return '<article class="product-card">'+(p.image_url?'<img loading="lazy" src="'+esc(p.image_url)+'" alt="'+esc(p.title)+'">':'')+
-      '<div class="product-card-body"><h3>'+esc(p.title)+'</h3><p>'+esc(p.description||'')+'</p>'+
-      (p.price!=null?'<strong>'+money(p.price)+'</strong> ':'')+
-      '<a class="btn btn-primary" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer nofollow">Ver oferta</a></div></article>';
-  }
-  function renderProducts(){
-    const g=$('products-grid'); if(!g)return;
-    g.innerHTML=products.length?products.map(productCard).join(''):'<p style="grid-column:1/-1">Nenhum achado cadastrado no momento.</p>';
-    if($('product-count'))$('product-count').textContent=products.length+' achado(s)';
-  }
-  function renderSponsored(){
-    const sec=$('sponsored-section'),g=$('sponsored-grid');if(!sec||!g)return;
-    sec.hidden=!ads.length;
-    g.innerHTML=ads.map(a=>'<article class="product-card">'+(a.image_url?'<img loading="lazy" src="'+esc(a.image_url)+'" alt="'+esc(a.title)+'">':'')+'<div class="product-card-body"><h3>'+esc(a.title||a.advertiser_name)+'</h3><p>'+esc(a.note||'')+'</p><a class="btn btn-primary" target="_blank" rel="noopener noreferrer nofollow" href="'+esc(a.url)+'">Conhecer</a></div></article>').join('');
-  }
-  function renderSettings(){
-    if($('ad-price-display'))$('ad-price-display').textContent=money(settings.price);
-    if($('ad-contact-display'))$('ad-contact-display').textContent=settings.contact||'—';
-    ['ig-follow-btn','ig-follow-btn-2'].forEach(id=>{if($(id)&&settings.instagram)$(id).href=settings.instagram;});
-    if($('settings-instagram'))$('settings-instagram').value=settings.instagram||'';
-    if($('settings-contact'))$('settings-contact').value=settings.contact||'';
-    if($('settings-price'))$('settings-price').value=settings.price||'';
-  }
-  async function isAdmin(){
-    const {data:{user}}=await db.auth.getUser();
-    return !!(user && user.app_metadata && user.app_metadata.role==='admin');
-  }
-  async function requireAdmin(){
-    if(!(await isAdmin())){toast('Acesso restrito ao administrador.');return false;}return true;
-  }
-  async function renderAdmin(){
-    if(!(await requireAdmin()))return;
-    const [p,a]=await Promise.all([db.from('products').select('*').order('created_at',{ascending:false}),db.from('ad_requests').select('*').order('created_at',{ascending:false})]);
-    if(p.error||a.error){toast('Não foi possível carregar o painel.');console.error(p.error,a.error);return;}
-    products=p.data||[];ads=a.data||[];
-    const pl=$('admin-products-list'),al=$('admin-ads-list');
-    if(pl)pl.innerHTML=products.map(p=>'<div class="admin-item"><strong>'+esc(p.title)+'</strong> — '+(p.active?'ativo':'inativo')+'<br><a href="'+esc(p.affiliate_url||p.product_url||'#')+'" target="_blank">link</a> <button type="button" onclick="toggleProduct(\''+p.id+'\','+(!p.active)+')">'+(p.active?'Desativar':'Ativar')+'</button> <button type="button" onclick="deleteProduct(\''+p.id+'\')">Excluir</button></div>').join('')||'<p>Nenhum produto.</p>';
-    if(al)al.innerHTML=ads.map(a=>'<div class="admin-item"><strong>'+esc(a.title||a.advertiser_name)+'</strong> ('+esc(a.status)+')<p>'+esc(a.contact)+' · <a target="_blank" href="'+esc(a.url)+'">link</a></p><button type="button" onclick="setAdStatus(\''+a.id+'\',\'approved\')">Aprovar</button> <button type="button" onclick="setAdStatus(\''+a.id+'\',\'rejected\')">Rejeitar</button> <button type="button" onclick="deleteAd(\''+a.id+'\')">Excluir</button></div>').join('')||'<p>Nenhuma solicitação.</p>';
-    renderProducts();renderSponsored();
-  }
-  window.toggleProduct=async(id,active)=>{if(!(await requireAdmin()))return;const {error}=await db.from('products').update({active}).eq('id',id);if(error)toast('Erro ao atualizar produto: '+error.message);else{toast('Produto atualizado.');await renderAdmin();}};
-  window.deleteProduct=async(id)=>{if(!(await requireAdmin())||!confirm('Excluir este produto?'))return;const {error}=await db.from('products').delete().eq('id',id);if(error)toast('Erro ao excluir: '+error.message);else{toast('Produto excluído.');await renderAdmin();}};
-  window.setAdStatus=async(id,status)=>{if(!(await requireAdmin()))return;const {error}=await db.from('ad_requests').update({status}).eq('id',id);if(error)toast('Erro ao atualizar anúncio: '+error.message);else{toast('Solicitação atualizada.');await renderAdmin();}};
-  window.deleteAd=async(id)=>{if(!(await requireAdmin())||!confirm('Excluir esta solicitação?'))return;const {error}=await db.from('ad_requests').delete().eq('id',id);if(error)toast('Erro ao excluir: '+error.message);else{toast('Solicitação excluída.');await renderAdmin();}};
-  document.addEventListener('DOMContentLoaded',()=>{
-    loadPublic().catch(e=>{console.error(e);toast('Erro ao carregar dados. Verifique a conexão.');});
-    if($('open-admin-btn'))$('open-admin-btn').addEventListener('click',()=>{$('admin-overlay').hidden=false;});
-    if($('close-admin-btn'))$('close-admin-btn').addEventListener('click',()=>{$('admin-overlay').hidden=true;});
-    if($('admin-login-form'))$('admin-login-form').addEventListener('submit',async e=>{
-      e.preventDefault();const email=$('login-email')?.value.trim(),password=$('login-passcode')?.value;
-      if(!email||!password){toast('Informe e-mail e senha.');return;}
-      const {error}=await db.auth.signInWithPassword({email,password});
-      if(error){toast('Falha no login: confira e-mail e senha.');return;}
-      if(!(await isAdmin())){await db.auth.signOut();toast('Esta conta não tem permissão de administrador.');return;}
-      $('admin-login-view').hidden=true;$('admin-panel-view').hidden=false;await renderAdmin();
+    const SUPABASE_URL = 'https://aefqeqaojtsucbmnamwd.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_odeu7vNperl6crymmKB5hA_3sZ9Cw1I';
+    const LEGACY_STORAGE_KEY = 'achados-vendidos-data-secure';
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: { storage: window.sessionStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
     });
-    if($('admin-logout-btn'))$('admin-logout-btn').addEventListener('click',async()=>{await db.auth.signOut();$('admin-panel-view').hidden=true;$('admin-login-view').hidden=false;});
-    document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.tab-panel').forEach(x=>x.hidden=x.id!=='tab-'+b.dataset.tab);}));
-    if($('ad-request-form'))$('ad-request-form').addEventListener('submit',async e=>{
-      e.preventDefault();const row={advertiser_name:$('ad-name').value.trim(),contact:$('ad-contact').value.trim(),url:$('ad-url').value.trim(),title:$('ad-title').value.trim(),note:$('ad-note').value.trim(),status:'pending'};
-      if(!row.advertiser_name||!row.contact||!/^https:\/\//i.test(row.url)||!row.title){toast('Preencha nome, contato, link HTTPS e título.');return;}
-      const {error}=await db.from('ad_requests').insert(row);
-      if(error){toast('Não foi possível enviar: '+error.message);return;}
-      $('ad-request-form').reset();const c=$('ad-confirmation');if(c){c.hidden=false;c.textContent='Solicitação recebida e aguardando análise. Não há confirmação automática por WhatsApp.';}toast('Solicitação enviada para análise.');
+
+    const DEFAULT_SETTINGS = { instagram: 'https://instagram.com', contact: '', price: '29.90' };
+    const DEFAULT_PRODUCTS = [
+      { url: 'https://meli.la/2DQ5Set', title: 'Produto 1', image: null },
+      { url: 'https://meli.la/1SobzQc', title: 'Produto 2', image: null },
+      { url: 'https://meli.la/2DvbM2x', title: 'Produto 3', image: null },
+      { url: 'https://meli.la/1xGEd2y', title: 'Produto 4', image: null },
+      { url: 'https://meli.la/1UrHuur', title: 'Produto 5', image: null },
+      { url: 'https://meli.la/1WsQcX9', title: 'Produto 6', image: null },
+      { url: 'https://meli.la/16ERb19', title: 'Produto 7', image: null },
+      { url: 'https://meli.la/2W1Qa29', title: 'Produto 8', image: null },
+      { url: 'https://meli.la/1XzB9wb', title: 'Produto 9', image: null },
+      { url: 'https://meli.la/31Do25n', title: 'Produto 10', image: null }
+    ];
+
+    let siteData = { products: [], ads: [], settings: Object.assign({}, DEFAULT_SETTINGS) };
+    let isAdminLoggedIn = false;
+    let currentProductImage = null;
+
+    const $ = id => document.getElementById(id);
+    const clone = value => JSON.parse(JSON.stringify(value));
+    const esc = value => String(value == null ? '' : value).replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
+    const toast = (message, isError = false) => {
+      const node = $('toast');
+      if (!node) return;
+      node.textContent = message;
+      node.classList.toggle('error', !!isError);
+      node.classList.add('show');
+      setTimeout(() => node.classList.remove('show'), 3500);
+    };
+    const loadData = () => clone(siteData);
+
+    function isValidUrl(value) {
+      try {
+        const parsed = new URL(value);
+        return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+      } catch (_) { return false; }
+    }
+
+    function validateForm(formId) {
+      const form = $(formId);
+      if (!form) return false;
+      let valid = true;
+      form.querySelectorAll('[data-field]').forEach(field => {
+        const name = field.dataset.field;
+        const input = field.querySelector('input, textarea, select');
+        let bad = !input || !input.value.trim();
+        if (input && name === 'url') bad = !isValidUrl(input.value.trim());
+        if (input && name === 'email') bad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
+        field.classList.toggle('has-error', bad);
+        if (bad) valid = false;
+      });
+      return valid;
+    }
+
+    function money(value) {
+      const amount = Number(String(value == null ? '' : value).replace(',', '.'));
+      return Number.isFinite(amount) ? amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—';
+    }
+
+    async function isAdmin() {
+      try {
+        const result = await db.auth.getUser();
+        const user = result && result.data && result.data.user;
+        return !!(user && user.app_metadata && user.app_metadata.role === 'admin');
+      } catch (error) {
+        console.warn('Não foi possível validar o administrador:', error);
+        return false;
+      }
+    }
+
+    async function requireAdmin() {
+      if (!isAdminLoggedIn || !(await isAdmin())) {
+        isAdminLoggedIn = false;
+        toast('Sessão administrativa expirada. Entre novamente.', true);
+        return false;
+      }
+      return true;
+    }
+
+    async function loadRemoteData(adminMode) {
+      const productQuery = db.from('products').select('*').order('created_at', { ascending: false });
+      const adQuery = db.from('ad_requests').select('*').order('created_at', { ascending: false });
+      if (!adminMode) {
+        productQuery.eq('active', true);
+        adQuery.eq('status', 'approved');
+      }
+      const results = await Promise.all([
+        productQuery,
+        adQuery,
+        db.from('settings').select('key,value').in('key', ['instagram', 'contact', 'price'])
+      ]);
+      const productsResult = results[0], adsResult = results[1], settingsResult = results[2];
+      if (productsResult.error) throw productsResult.error;
+      if (adsResult.error) throw adsResult.error;
+      if (settingsResult.error) throw settingsResult.error;
+
+      const products = (productsResult.data || []).map(row => ({
+        id: row.id,
+        url: row.affiliate_url || row.product_url || '',
+        title: row.title || '',
+        image: row.image_url || null,
+        active: row.active !== false,
+        price: row.price,
+        description: row.description || '',
+        source: row.source || 'manual'
+      }));
+      const ads = (adsResult.data || []).map(row => ({
+        id: row.id,
+        advertiserName: row.advertiser_name || '',
+        contact: row.contact || '',
+        url: row.url || '',
+        title: row.title || '',
+        note: row.note || '',
+        image: row.image_url || null,
+        status: row.status || 'pending',
+        createdAt: row.created_at
+      }));
+      const settings = Object.assign({}, DEFAULT_SETTINGS);
+      (settingsResult.data || []).forEach(row => {
+        settings[row.key] = typeof row.value === 'string' ? row.value : (row.value == null ? '' : String(row.value));
+      });
+      siteData = { products: products.length ? products : [], ads: ads, settings: settings };
+      renderProducts();
+      renderSponsored();
+      updateInstagramLink();
+      updateAdInfo();
+      if (adminMode) {
+        loadSettings();
+        renderProductList();
+        renderAdList();
+      }
+      return siteData;
+    }
+
+    async function compressImageForStorage(dataUrl) {
+      if (!dataUrl || !/^data:image\//i.test(dataUrl)) return null;
+      return new Promise(resolve => {
+        const image = new Image();
+        image.onload = () => {
+          try {
+            const maxSide = 1200;
+            const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+            canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+            const context = canvas.getContext('2d');
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.76));
+          } catch (_) { resolve(null); }
+        };
+        image.onerror = () => resolve(null);
+        image.src = dataUrl;
+      });
+    }
+
+    function previewImage(event, previewId) {
+      const file = event && event.target && event.target.files && event.target.files[0];
+      if (!file) return;
+      if (!file.type || !file.type.startsWith('image/')) { toast('Selecione um arquivo de imagem.', true); return; }
+      const reader = new FileReader();
+      reader.onload = eventResult => {
+        const image = $(previewId);
+        if (image) { image.src = eventResult.target.result; image.hidden = false; }
+        currentProductImage = eventResult.target.result;
+      };
+      reader.onerror = () => toast('Não foi possível abrir essa imagem.', true);
+      reader.readAsDataURL(file);
+    }
+
+    function renderProducts() {
+      const data = loadData();
+      const grid = $('products-grid');
+      const count = $('product-count');
+      if (!grid) return;
+      const products = data.products.filter(product => product.active !== false);
+      if (count) count.textContent = products.length + ' achados';
+      if (!products.length) {
+        grid.innerHTML = '<p style="color:var(--ink-faint); grid-column:1/-1; text-align:center;">Nenhum achado por enquanto. Volte em breve!</p>';
+        return;
+      }
+      grid.innerHTML = products.map(product =>
+        '<div class="product-card"><div class="product-image">' +
+        (product.image ? '<img loading="lazy" src="' + esc(product.image) + '" alt="' + esc(product.title) + '">' : '📦') +
+        '</div><div class="product-info"><div class="product-title">' + esc(product.title) + '</div>' +
+        (product.price != null && product.price !== '' ? '<div class="product-price">' + esc(money(product.price)) + '</div>' : '') +
+        '<div class="product-footer"><a href="' + esc(product.url) + '" target="_blank" rel="noopener noreferrer nofollow">Ver oferta →</a></div></div></div>'
+      ).join('');
+    }
+
+    function renderSponsored() {
+      const data = loadData();
+      const section = $('sponsored-section');
+      const grid = $('sponsored-grid');
+      if (!section || !grid) return;
+      const approved = data.ads.filter(ad => ad.status === 'approved');
+      section.hidden = !approved.length;
+      grid.innerHTML = approved.map(ad =>
+        '<div class="product-card"><div class="sponsor-badge">⭐ DESTAQUE</div><div class="product-image">' +
+        (ad.image ? '<img loading="lazy" src="' + esc(ad.image) + '" alt="' + esc(ad.title) + '">' : '📦') +
+        '</div><div class="product-info"><div class="product-title">' + esc(ad.title) + '</div>' +
+        '<div class="product-footer"><a href="' + esc(ad.url) + '" target="_blank" rel="noopener noreferrer nofollow">Ver produto →</a></div></div></div>'
+      ).join('');
+    }
+
+    function renderAdList() {
+      const list = $('admin-ads-list');
+      if (!list) return;
+      const ads = loadData().ads;
+      if (!ads.length) {
+        list.innerHTML = '<div class="empty-state">📭 Nenhuma solicitação ainda.</div>';
+        return;
+      }
+      list.innerHTML = ads.map(ad =>
+        '<div class="admin-row"><div class="admin-row-main"><div style="font-weight:700;margin-bottom:4px;">' +
+        esc(ad.title) + ' <span class="status-stamp status-' + esc(ad.status) + '">' +
+        (ad.status === 'pending' ? 'Pendente' : ad.status === 'approved' ? 'Aprovado' : 'Rejeitado') +
+        '</span></div><div style="font-size:13px;color:var(--ink-soft);margin-bottom:4px;"><strong>' +
+        esc(ad.advertiserName) + '</strong></div><div style="font-size:13px;color:var(--ink-soft);margin-bottom:4px;">Contato: ' +
+        esc(ad.contact) + '</div><div style="font-size:13px;color:var(--ink-soft);word-break:break-all;"><a href="' +
+        esc(ad.url) + '" target="_blank" rel="noopener noreferrer" style="color:var(--stamp);">Ver anúncio →</a></div>' +
+        (ad.note ? '<div style="font-size:13px;color:var(--ink-soft);margin-top:6px;">📝 ' + esc(ad.note) + '</div>' : '') +
+        '</div><div class="admin-row-actions">' +
+        (ad.status === 'pending' ? '<button class="icon-btn" type="button" data-ad-action="approved" data-ad-id="' + esc(ad.id) + '" title="Aprovar">✓</button><button class="icon-btn danger" type="button" data-ad-action="rejected" data-ad-id="' + esc(ad.id) + '" title="Rejeitar">✕</button>' : '') +
+        '<button class="icon-btn danger" type="button" data-ad-action="delete" data-ad-id="' + esc(ad.id) + '" title="Deletar">🗑</button></div></div>'
+      ).join('');
+    }
+
+    function renderProductList() {
+      const list = $('admin-products-list');
+      if (!list) return;
+      const products = loadData().products;
+      if (!products.length) {
+        list.innerHTML = '<div class="empty-state">📦 Nenhum produto adicionado.</div>';
+        return;
+      }
+      list.innerHTML = products.map(product =>
+        '<div class="admin-row"><div class="admin-row-main"><div style="font-weight:700;margin-bottom:4px;">' +
+        esc(product.title) + (product.active === false ? ' <span class="status-stamp status-rejected">Inativo</span>' : '') + '</div>' +
+        (product.image ? '<img loading="lazy" src="' + esc(product.image) + '" style="width:60px;height:60px;object-fit:cover;border-radius:4px;margin-bottom:8px;" alt="">' : '') +
+        '<div style="font-size:13px;color:var(--ink-soft);word-break:break-all;"><a href="' + esc(product.url) +
+        '" target="_blank" rel="noopener noreferrer" style="color:var(--stamp);">Ver no Mercado Livre →</a></div></div>' +
+        '<div class="admin-row-actions"><button class="icon-btn danger" type="button" data-delete-product="' + esc(product.id) + '" title="Deletar">🗑</button></div></div>'
+      ).join('');
+    }
+
+    function loadSettings() {
+      const settings = loadData().settings;
+      if ($('settings-instagram')) $('settings-instagram').value = settings.instagram || '';
+      if ($('settings-contact')) $('settings-contact').value = settings.contact || '';
+      if ($('settings-price')) $('settings-price').value = settings.price || '29.90';
+    }
+
+    function updateAdInfo() {
+      const settings = loadData().settings;
+      const price = settings.price || '29.90';
+      if ($('ad-price-display')) $('ad-price-display').textContent = money(price);
+      if ($('ad-contact-display')) $('ad-contact-display').textContent = settings.contact || '—';
+    }
+
+    function updateInstagramLink() {
+      const data = loadData();
+      const link = isValidUrl(data.settings.instagram) ? data.settings.instagram : 'https://instagram.com';
+      ['ig-follow-btn', 'ig-follow-btn-2'].forEach(id => { if ($(id)) $(id).href = link; });
+    }
+
+    async function migrateLegacyLocalDataOnce() {
+      let raw = null;
+      try { raw = window.localStorage.getItem(LEGACY_STORAGE_KEY); } catch (_) {}
+      if (!raw) return;
+      let legacy;
+      try { legacy = JSON.parse(raw); } catch (_) {
+        try { window.localStorage.removeItem(LEGACY_STORAGE_KEY); } catch (_) {}
+        return;
+      }
+      const marker = await db.from('settings').select('key').eq('key', 'legacy_local_data_migrated').maybeSingle();
+      if (marker.error) { console.warn('Migração antiga adiada:', marker.error); return; }
+      if (marker.data) {
+        try { window.localStorage.removeItem(LEGACY_STORAGE_KEY); } catch (_) {}
+        return;
+      }
+      const existingProductsResult = await db.from('products').select('affiliate_url,product_url');
+      if (existingProductsResult.error) { console.warn(existingProductsResult.error); return; }
+      const knownUrls = new Set();
+      (existingProductsResult.data || []).forEach(row => { if (row.affiliate_url) knownUrls.add(row.affiliate_url); if (row.product_url) knownUrls.add(row.product_url); });
+      for (const product of (Array.isArray(legacy.products) ? legacy.products : [])) {
+        const url = String(product.url || product.affiliate_url || product.product_url || '').trim();
+        const title = String(product.title || '').trim();
+        if (!url || !title || !isValidUrl(url) || knownUrls.has(url)) continue;
+        const image = await compressImageForStorage(product.image || product.image_url || null);
+        const inserted = await db.from('products').insert({
+          title: title, product_url: url, affiliate_url: url, image_url: image,
+          marketplace: 'mercado_livre', active: true, featured: false,
+          source: 'legacy-localstorage-migration', is_affiliate: true, auto_publish: false
+        });
+        if (inserted.error) { console.warn('Produto legado não migrado:', inserted.error); return; }
+        knownUrls.add(url);
+      }
+      const existingAdsResult = await db.from('ad_requests').select('title,url');
+      if (existingAdsResult.error) { console.warn(existingAdsResult.error); return; }
+      const knownAds = new Set((existingAdsResult.data || []).map(row => String(row.title || '') + '|' + String(row.url || '')));
+      for (const ad of (Array.isArray(legacy.ads) ? legacy.ads : [])) {
+        const title = String(ad.title || '').trim();
+        const url = String(ad.url || '').trim();
+        const key = title + '|' + url;
+        if (!title || !isValidUrl(url) || knownAds.has(key)) continue;
+        const inserted = await db.from('ad_requests').insert({
+          advertiser_name: String(ad.advertiserName || ad.advertiser_name || 'Anunciante'),
+          contact: String(ad.contact || ''), url: url, title: title,
+          note: String(ad.note || ''), status: ['pending','approved','rejected'].includes(ad.status) ? ad.status : 'pending',
+          image_url: null
+        });
+        if (inserted.error) { console.warn('Anúncio legado não migrado:', inserted.error); return; }
+        knownAds.add(key);
+      }
+      const oldSettings = legacy.settings || {};
+      for (const key of ['instagram', 'contact', 'price']) {
+        const value = String(oldSettings[key] == null ? '' : oldSettings[key]).trim();
+        const isDefault = (key === 'instagram' && value === 'https://instagram.com') || (key === 'contact' && value === '') || (key === 'price' && value === '29.90');
+        if (!value || isDefault) continue;
+        const saved = await db.from('settings').upsert({ key: key, value: value }, { onConflict: 'key' });
+        if (saved.error) { console.warn('Configuração antiga não migrada:', saved.error); return; }
+      }
+      const marked = await db.from('settings').upsert({ key: 'legacy_local_data_migrated', value: true }, { onConflict: 'key' });
+      if (marked.error) { console.warn('Marcador da migração não salvo:', marked.error); return; }
+      try { window.localStorage.removeItem(LEGACY_STORAGE_KEY); } catch (_) {}
+      toast('Dados salvos anteriormente neste navegador foram transferidos para o banco.');
+    }
+
+    async function refreshRemoteData(adminMode) {
+      try {
+        await loadRemoteData(adminMode);
+        return true;
+      } catch (error) {
+        console.error('Erro ao carregar dados do Supabase:', error);
+        toast('Não foi possível sincronizar com o banco. Tente novamente.', true);
+        return false;
+      }
+    }
+
+    async function loadRemoteData(adminMode) {
+      const productQuery = db.from('products').select('*').order('created_at', { ascending: false });
+      const adQuery = db.from('ad_requests').select('*').order('created_at', { ascending: false });
+      if (!adminMode) {
+        productQuery.eq('active', true);
+        adQuery.eq('status', 'approved');
+      }
+      const results = await Promise.all([
+        productQuery,
+        adQuery,
+        db.from('settings').select('key,value').in('key', ['instagram', 'contact', 'price'])
+      ]);
+      const productResult = results[0], adResult = results[1], settingsResult = results[2];
+      if (productResult.error) throw productResult.error;
+      if (adResult.error) throw adResult.error;
+      if (settingsResult.error) throw settingsResult.error;
+      const products = (productResult.data || []).map(row => ({
+        id: row.id, url: row.affiliate_url || row.product_url || '', title: row.title || '',
+        image: row.image_url || null, active: row.active !== false, price: row.price,
+        description: row.description || '', source: row.source || 'manual'
+      }));
+      const ads = (adResult.data || []).map(row => ({
+        id: row.id, advertiserName: row.advertiser_name || '', contact: row.contact || '',
+        url: row.url || '', title: row.title || '', note: row.note || '',
+        image: row.image_url || null, status: row.status || 'pending', createdAt: row.created_at
+      }));
+      const settings = Object.assign({}, DEFAULT_SETTINGS);
+      (settingsResult.data || []).forEach(row => {
+        settings[row.key] = typeof row.value === 'string' ? row.value : (row.value == null ? '' : String(row.value));
+      });
+      siteData = { products: products, ads: ads, settings: settings };
+      renderProducts();
+      renderSponsored();
+      updateInstagramLink();
+      updateAdInfo();
+      if (adminMode) {
+        loadSettings();
+        renderProductList();
+        renderAdList();
+      }
+      return siteData;
+    }
+
+    async function approveAd(id) { return updateAdStatus(id, 'approved'); }
+    async function rejectAd(id) { return updateAdStatus(id, 'rejected'); }
+    async function updateAdStatus(id, status) {
+      if (!(await requireAdmin())) return;
+      const result = await db.from('ad_requests').update({ status: status }).eq('id', id);
+      if (result.error) { toast('Não foi possível atualizar o anúncio: ' + result.error.message, true); return; }
+      await refreshRemoteData(true);
+      toast(status === 'approved' ? '✓ Anúncio aprovado!' : 'Solicitação rejeitada.');
+    }
+
+    async function deleteAd(id) {
+      if (!(await requireAdmin()) || !confirm('Deletar este anúncio?')) return;
+      const result = await db.from('ad_requests').delete().eq('id', id);
+      if (result.error) { toast('Não foi possível excluir o anúncio: ' + result.error.message, true); return; }
+      await refreshRemoteData(true);
+      toast('🗑 Anúncio excluído.');
+    }
+
+    async function deleteProduct(id) {
+      if (!(await requireAdmin()) || !confirm('Deletar este achado?')) return;
+      const result = await db.from('products').delete().eq('id', id);
+      if (result.error) { toast('Não foi possível excluir o produto: ' + result.error.message, true); return; }
+      await refreshRemoteData(true);
+      toast('🗑 Produto excluído.');
+    }
+
+    async function showAdminPanel() {
+      if (!(await isAdmin())) { isAdminLoggedIn = false; toast('Esta conta não tem permissão de administrador.', true); return; }
+      isAdminLoggedIn = true;
+      $('admin-login-view').hidden = true;
+      $('admin-panel-view').hidden = false;
+      await migrateLegacyLocalDataOnce();
+      if (!(await refreshRemoteData(true))) return;
+      document.querySelectorAll('.tab-btn').forEach(button => button.classList.toggle('active', button.dataset.tab === 'products'));
+      document.querySelectorAll('.tab-panel').forEach(panel => { panel.hidden = panel.dataset.tabPanel !== 'products'; });
+    }
+
+    async function hideAdminPanel(signOut) {
+      $('admin-overlay').hidden = true;
+      $('admin-panel-view').hidden = true;
+      $('admin-login-view').hidden = false;
+      isAdminLoggedIn = false;
+      if ($('login-passcode')) $('login-passcode').value = '';
+      if ($('login-email')) $('login-email').value = '';
+      if (signOut !== false) {
+        const result = await db.auth.signOut();
+        if (result.error) console.warn('Não foi possível encerrar a sessão:', result.error);
+        await refreshRemoteData(false);
+      }
+    }
+
+    function updateTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(button => button.classList.toggle('active', button.dataset.tab === tabName));
+      document.querySelectorAll('.tab-panel').forEach(panel => { panel.hidden = panel.dataset.tabPanel !== tabName; });
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        isAdminLoggedIn = await isAdmin();
+        await loadRemoteData(isAdminLoggedIn);
+      } catch (error) {
+        console.error('Erro ao iniciar o site:', error);
+        toast('Erro ao carregar os dados do site. Verifique a conexão.', true);
+        siteData = { products: [], ads: [], settings: Object.assign({}, DEFAULT_SETTINGS) };
+        renderProducts(); renderSponsored(); updateInstagramLink(); updateAdInfo();
+      }
+
+      if ($('open-admin-btn')) $('open-admin-btn').addEventListener('click', async () => {
+        $('admin-overlay').hidden = false;
+        if (await isAdmin()) await showAdminPanel();
+        else { $('admin-login-view').hidden = false; $('admin-panel-view').hidden = true; }
+      });
+      if ($('close-admin-btn')) $('close-admin-btn').addEventListener('click', () => { hideAdminPanel(true); });
+      if ($('admin-overlay')) $('admin-overlay').addEventListener('click', event => {
+        if (event.target === $('admin-overlay')) hideAdminPanel(true);
+      });
+      if ($('admin-logout-btn')) $('admin-logout-btn').addEventListener('click', async () => {
+        await hideAdminPanel(true);
+        toast('👋 Sessão encerrada.');
+      });
+
+      document.querySelectorAll('.tab-btn').forEach(button => button.addEventListener('click', () => updateTab(button.dataset.tab)));
+
+      if ($('admin-login-form')) $('admin-login-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!validateForm('admin-login-form')) return;
+        const email = $('login-email').value.trim();
+        const password = $('login-passcode').value;
+        try {
+          const result = await db.auth.signInWithPassword({ email: email, password: password });
+          if (result.error) { toast('Falha no login: confira e-mail e senha.', true); return; }
+          if (!(await isAdmin())) {
+            await db.auth.signOut();
+            toast('Esta conta não tem permissão de administrador.', true);
+            return;
+          }
+          await showAdminPanel();
+          toast('✓ Bem-vindo ao painel!');
+        } catch (error) {
+          console.error(error);
+          toast('Não foi possível entrar no painel. Tente novamente.', true);
+        }
+      });
+
+      if ($('add-product-form')) $('add-product-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!validateForm('add-product-form') || !(await requireAdmin())) return;
+        const url = $('new-product-url').value.trim();
+        const title = $('new-product-title').value.trim();
+        const image = currentProductImage ? await compressImageForStorage(currentProductImage) : null;
+        if (currentProductImage && !image) { toast('Não foi possível preparar a imagem. Escolha outra foto.', true); return; }
+        const result = await db.from('products').insert({
+          title: title, product_url: url, affiliate_url: url, image_url: image,
+          description: '', marketplace: 'mercado_livre', active: true, featured: false,
+          source: 'manual', is_affiliate: true, auto_publish: false
+        });
+        if (result.error) { toast('Não foi possível salvar o produto: ' + result.error.message, true); return; }
+        $('add-product-form').reset();
+        if ($('image-preview-new')) { $('image-preview-new').hidden = true; $('image-preview-new').removeAttribute('src'); }
+        currentProductImage = null;
+        await refreshRemoteData(true);
+        toast('✓ Produto salvo no banco!');
+      });
+
+      if ($('ad-request-form')) $('ad-request-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!validateForm('ad-request-form')) return;
+        const row = {
+          advertiser_name: $('ad-name').value.trim(), contact: $('ad-contact').value.trim(),
+          url: $('ad-url').value.trim(), title: $('ad-title').value.trim(), note: $('ad-note').value.trim(),
+          status: 'pending'
+        };
+        const result = await db.from('ad_requests').insert(row);
+        if (result.error) { toast('Não foi possível enviar a solicitação. Tente novamente.', true); console.error(result.error); return; }
+        $('ad-request-form').hidden = true;
+        $('ad-confirmation').hidden = false;
+        $('ad-confirmation').innerHTML = '<p style="margin-bottom:12px;font-size:16px;">✓ Solicitação enviada!</p><p style="font-size:14px;">Ela ficará aguardando análise antes de aparecer no site.</p>';
+        setTimeout(() => { $('ad-request-form').hidden = false; $('ad-confirmation').hidden = true; $('ad-request-form').reset(); }, 4500);
+      });
+
+      if ($('settings-form')) $('settings-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!(await requireAdmin())) return;
+        const values = {
+          instagram: $('settings-instagram').value.trim() || 'https://instagram.com',
+          contact: $('settings-contact').value.trim(),
+          price: $('settings-price').value.trim() || '29.90'
+        };
+        for (const key of Object.keys(values)) {
+          const result = await db.from('settings').upsert({ key: key, value: values[key] }, { onConflict: 'key' });
+          if (result.error) { toast('Erro ao salvar configurações: ' + result.error.message, true); console.error(result.error); return; }
+        }
+        await refreshRemoteData(true);
+        toast('✓ Configurações salvas no banco!');
+      });
+
+      if ($('admin-products-list')) $('admin-products-list').addEventListener('click', async event => {
+        const button = event.target.closest('[data-delete-product]');
+        if (button) await deleteProduct(button.dataset.deleteProduct);
+      });
+      if ($('admin-ads-list')) $('admin-ads-list').addEventListener('click', async event => {
+        const button = event.target.closest('[data-ad-action]');
+        if (!button) return;
+        if (button.dataset.adAction === 'delete') await deleteAd(button.dataset.adId);
+        else await updateAdStatus(button.dataset.adId, button.dataset.adAction);
+      });
     });
-    if($('add-product-form'))$('add-product-form').addEventListener('submit',async e=>{
-      e.preventDefault();if(!(await requireAdmin()))return;
-      const url=$('new-product-url').value.trim(),title=$('new-product-title').value.trim();
-      if(!title||!/^https:\/\//i.test(url)){toast('Informe título e URL HTTPS válida.');return;}
-      const {error}=await db.from('products').insert({title,product_url:url,affiliate_url:url,description:'',active:true,featured:false,marketplace:'mercado_livre',source:'manual',is_affiliate:true,auto_publish:false});
-      if(error){toast('Não foi possível salvar: '+error.message);return;}
-      $('add-product-form').reset();toast('Produto salvo no banco.');await renderAdmin();await loadPublic();
-    });
-    if($('settings-form'))$('settings-form').addEventListener('submit',async e=>{
-      e.preventDefault();if(!(await requireAdmin()))return;
-      const vals={instagram:$('settings-instagram').value.trim(),contact:$('settings-contact').value.trim(),price:$('settings-price').value.trim()};
-      for(const [key,value] of Object.entries(vals)){const {error}=await db.from('settings').upsert({key,value},{onConflict:'key'});if(error){toast('Erro ao salvar configurações: '+error.message);return;}}
-      settings=Object.assign(settings,vals);renderSettings();toast('Configurações salvas.');
-    });
-  });
   </script>
 
 </body>
