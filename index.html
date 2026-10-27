@@ -280,8 +280,13 @@
 
       <div id="admin-login-view">
         <h3>🔐 Painel do Administrador</h3>
-        <p class="section-sub">Digite a senha para acessar.</p>
+        <p class="section-sub">Entre com seu e-mail e senha de administrador cadastrados no Supabase.</p>
         <form id="admin-login-form" novalidate style="margin-top:20px;">
+          <div class="field" data-field="email">
+            <label for="login-email">E-mail</label>
+            <input id="login-email" type="email" autocomplete="username" placeholder="voce@exemplo.com">
+            <span class="field-error">Digite um e-mail válido!</span>
+          </div>
           <div class="field" data-field="passcode">
             <label for="login-passcode">Senha</label>
             <input id="login-passcode" type="password" autocomplete="current-password" placeholder="••••••">
@@ -1705,394 +1710,516 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const STORAGE_KEY = 'achados-vendidos-data-secure';
-    const ADMIN_PASSWORD = 'jacare61';
+    const SUPABASE_URL = 'https://aefqeqaojtsucbmnamwd.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_odeu7vNperl6crymmKB5hA_3sZ9Cw1I';
+    const LEGACY_STORAGE_KEY = 'achados-vendidos-data-secure';
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: { storage: window.sessionStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+    });
 
-    function loadData() {
-      const data = localStorage.getItem(STORAGE_KEY);
-      return data ? JSON.parse(data) : { 
-        products: [
-          { url: 'https://meli.la/2DQ5Set', title: 'Produto 1', image: null },
-          { url: 'https://meli.la/1SobzQc', title: 'Produto 2', image: null },
-          { url: 'https://meli.la/2DvbM2x', title: 'Produto 3', image: null },
-          { url: 'https://meli.la/1xGEd2y', title: 'Produto 4', image: null },
-          { url: 'https://meli.la/1UrHuur', title: 'Produto 5', image: null },
-          { url: 'https://meli.la/1WsQcX9', title: 'Produto 6', image: null },
-          { url: 'https://meli.la/16ERb19', title: 'Produto 7', image: null },
-          { url: 'https://meli.la/2W1Qa29', title: 'Produto 8', image: null },
-          { url: 'https://meli.la/1XzB9wb', title: 'Produto 9', image: null },
-          { url: 'https://meli.la/31Do25n', title: 'Produto 10', image: null }
-        ], 
-        ads: [], 
-        settings: { instagram: 'https://instagram.com', contact: '', price: '29.90' }
-      };
-    }
+    const DEFAULT_SETTINGS = { instagram: 'https://instagram.com', contact: '', price: '29.90' };
+    const DEFAULT_PRODUCTS = [
+      { url: 'https://meli.la/2DQ5Set', title: 'Produto 1', image: null },
+      { url: 'https://meli.la/1SobzQc', title: 'Produto 2', image: null },
+      { url: 'https://meli.la/2DvbM2x', title: 'Produto 3', image: null },
+      { url: 'https://meli.la/1xGEd2y', title: 'Produto 4', image: null },
+      { url: 'https://meli.la/1UrHuur', title: 'Produto 5', image: null },
+      { url: 'https://meli.la/1WsQcX9', title: 'Produto 6', image: null },
+      { url: 'https://meli.la/16ERb19', title: 'Produto 7', image: null },
+      { url: 'https://meli.la/2W1Qa29', title: 'Produto 8', image: null },
+      { url: 'https://meli.la/1XzB9wb', title: 'Produto 9', image: null },
+      { url: 'https://meli.la/31Do25n', title: 'Produto 10', image: null }
+    ];
 
-    function saveData(data) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
-
+    let siteData = { products: [], ads: [], settings: Object.assign({}, DEFAULT_SETTINGS) };
     let isAdminLoggedIn = false;
     let currentProductImage = null;
 
-    function previewImage(event, previewId) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = document.getElementById(previewId);
-          img.src = e.target.result;
-          img.hidden = false;
-          currentProductImage = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    }
+    const $ = id => document.getElementById(id);
+    const clone = value => JSON.parse(JSON.stringify(value));
+    const esc = value => String(value == null ? '' : value).replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]));
+    const toast = (message, isError = false) => {
+      const node = $('toast');
+      if (!node) return;
+      node.textContent = message;
+      node.classList.toggle('error', !!isError);
+      node.classList.add('show');
+      setTimeout(() => node.classList.remove('show'), 3500);
+    };
+    const loadData = () => clone(siteData);
 
-    function showToast(message, isError = false) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.toggle('error', isError);
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-
-    function isValidUrl(string) {
+    function isValidUrl(value) {
       try {
-        const url = new URL(string);
-        return url.protocol === 'http:' || url.protocol === 'https:';
-      } catch (_) {
+        const parsed = new URL(value);
+        return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+      } catch (_) { return false; }
+    }
+
+    function validateForm(formId) {
+      const form = $(formId);
+      if (!form) return false;
+      let valid = true;
+      form.querySelectorAll('[data-field]').forEach(field => {
+        const name = field.dataset.field;
+        const input = field.querySelector('input, textarea, select');
+        let bad = !input || !input.value.trim();
+        if (input && name === 'url') bad = !isValidUrl(input.value.trim());
+        if (input && name === 'email') bad = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
+        field.classList.toggle('has-error', bad);
+        if (bad) valid = false;
+      });
+      return valid;
+    }
+
+    function money(value) {
+      const amount = Number(String(value == null ? '' : value).replace(',', '.'));
+      return Number.isFinite(amount) ? amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—';
+    }
+
+    async function isAdmin() {
+      try {
+        const result = await db.auth.getUser();
+        const user = result && result.data && result.data.user;
+        return !!(user && user.app_metadata && user.app_metadata.role === 'admin');
+      } catch (error) {
+        console.warn('Não foi possível validar o administrador:', error);
         return false;
       }
     }
 
-    function validateForm(formId) {
-      const form = document.getElementById(formId);
-      let isValid = true;
-      form.querySelectorAll('[data-field]').forEach(field => {
-        const fieldName = field.dataset.field;
-        const input = field.querySelector('input, textarea, select');
-        let hasError = false;
+    async function requireAdmin() {
+      if (!isAdminLoggedIn || !(await isAdmin())) {
+        isAdminLoggedIn = false;
+        toast('Sessão administrativa expirada. Entre novamente.', true);
+        return false;
+      }
+      return true;
+    }
 
-        if (fieldName === 'url') {
-          hasError = !isValidUrl(input.value);
-        } else if (fieldName === 'passcode') {
-          hasError = !input.value.trim();
-        } else {
-          hasError = !input.value.trim();
-        }
-
-        field.classList.toggle('has-error', hasError);
-        if (hasError) isValid = false;
+    async function compressImageForStorage(dataUrl) {
+      if (!dataUrl || !/^data:image\//i.test(dataUrl)) return null;
+      return new Promise(resolve => {
+        const image = new Image();
+        image.onload = () => {
+          try {
+            const maxSide = 1200;
+            const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+            canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+            const context = canvas.getContext('2d');
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.76));
+          } catch (_) { resolve(null); }
+        };
+        image.onerror = () => resolve(null);
+        image.src = dataUrl;
       });
-      return isValid;
+    }
+
+    function previewImage(event, previewId) {
+      const file = event && event.target && event.target.files && event.target.files[0];
+      if (!file) return;
+      if (!file.type || !file.type.startsWith('image/')) { toast('Selecione um arquivo de imagem.', true); return; }
+      const reader = new FileReader();
+      reader.onload = eventResult => {
+        const image = $(previewId);
+        if (image) { image.src = eventResult.target.result; image.hidden = false; }
+        currentProductImage = eventResult.target.result;
+      };
+      reader.onerror = () => toast('Não foi possível abrir essa imagem.', true);
+      reader.readAsDataURL(file);
     }
 
     function renderProducts() {
       const data = loadData();
-      const grid = document.getElementById('products-grid');
-      const count = document.getElementById('product-count');
-
-      count.textContent = `${data.products.length} achados`;
-
-      if (data.products.length === 0) {
-        grid.innerHTML = '<p style="color:var(--ink-faint); grid-column:1/-1; text-align: center;">Nenhum achado por enquanto. Volte em breve!</p>';
+      const grid = $('products-grid');
+      const count = $('product-count');
+      if (!grid) return;
+      const products = data.products.filter(product => product.active !== false);
+      if (count) count.textContent = products.length + ' achados';
+      if (!products.length) {
+        grid.innerHTML = '<p style="color:var(--ink-faint); grid-column:1/-1; text-align:center;">Nenhum achado por enquanto. Volte em breve!</p>';
         return;
       }
-
-      grid.innerHTML = data.products.map((product) => `
-        <div class="product-card">
-          <div class="product-image">
-            ${product.image ? `<img src="${product.image}" alt="${product.title}">` : '📦'}
-          </div>
-          <div class="product-info">
-            <div class="product-title">${product.title}</div>
-            <div class="product-footer">
-              <a href="${product.url}" target="_blank" rel="noopener noreferrer">Ver oferta →</a>
-            </div>
-          </div>
-        </div>
-      `).join('');
+      grid.innerHTML = products.map(product =>
+        '<div class="product-card"><div class="product-image">' +
+        (product.image ? '<img loading="lazy" src="' + esc(product.image) + '" alt="' + esc(product.title) + '">' : '📦') +
+        '</div><div class="product-info"><div class="product-title">' + esc(product.title) + '</div>' +
+        (product.price != null && product.price !== '' ? '<div class="product-price">' + esc(money(product.price)) + '</div>' : '') +
+        '<div class="product-footer"><a href="' + esc(product.url) + '" target="_blank" rel="noopener noreferrer nofollow">Ver oferta →</a></div></div></div>'
+      ).join('');
     }
 
     function renderSponsored() {
       const data = loadData();
-      const section = document.getElementById('sponsored-section');
-      const grid = document.getElementById('sponsored-grid');
+      const section = $('sponsored-section');
+      const grid = $('sponsored-grid');
+      if (!section || !grid) return;
       const approved = data.ads.filter(ad => ad.status === 'approved');
-
-      if (approved.length === 0) {
-        section.hidden = true;
-        return;
-      }
-
-      section.hidden = false;
-      grid.innerHTML = approved.map(ad => `
-        <div class="product-card">
-          <div class="sponsor-badge">⭐ DESTAQUE</div>
-          <div class="product-image">
-            ${ad.image ? `<img src="${ad.image}" alt="${ad.title}">` : '📦'}
-          </div>
-          <div class="product-info">
-            <div class="product-title">${ad.title}</div>
-            <div class="product-footer">
-              <a href="${ad.url}" target="_blank" rel="noopener noreferrer">Ver produto →</a>
-            </div>
-          </div>
-        </div>
-      `).join('');
+      section.hidden = !approved.length;
+      grid.innerHTML = approved.map(ad =>
+        '<div class="product-card"><div class="sponsor-badge">⭐ DESTAQUE</div><div class="product-image">' +
+        (ad.image ? '<img loading="lazy" src="' + esc(ad.image) + '" alt="' + esc(ad.title) + '">' : '📦') +
+        '</div><div class="product-info"><div class="product-title">' + esc(ad.title) + '</div>' +
+        '<div class="product-footer"><a href="' + esc(ad.url) + '" target="_blank" rel="noopener noreferrer nofollow">Ver produto →</a></div></div></div>'
+      ).join('');
     }
 
     function renderAdList() {
-      const data = loadData();
-      const list = document.getElementById('admin-ads-list');
-
-      if (data.ads.length === 0) {
+      const list = $('admin-ads-list');
+      if (!list) return;
+      const ads = loadData().ads;
+      if (!ads.length) {
         list.innerHTML = '<div class="empty-state">📭 Nenhuma solicitação ainda.</div>';
         return;
       }
-
-      list.innerHTML = data.ads.map((ad, idx) => `
-        <div class="admin-row">
-          <div class="admin-row-main">
-            <div style="font-weight: 700; margin-bottom: 4px;">${ad.title} <span class="status-stamp status-${ad.status}">${ad.status === 'pending' ? 'Pendente' : ad.status === 'approved' ? 'Aprovado' : 'Rejeitado'}</span></div>
-            <div style="font-size: 13px; color: var(--ink-soft); margin-bottom: 4px;"><strong>${ad.advertiserName}</strong></div>
-            <div style="font-size: 13px; color: var(--ink-soft); margin-bottom: 4px;">WhatsApp: ${ad.contact}</div>
-            <div style="font-size: 13px; color: var(--ink-soft); word-break: break-all;"><a href="${ad.url}" target="_blank" style="color: var(--stamp);">Ver anúncio →</a></div>
-            ${ad.note ? `<div style="font-size: 13px; color: var(--ink-soft); margin-top: 6px;">📝 ${ad.note}</div>` : ''}
-          </div>
-          <div class="admin-row-actions">
-            ${ad.status === 'pending' ? `
-              <button class="icon-btn" onclick="approveAd(${idx})" title="Aprovar">✓</button>
-              <button class="icon-btn danger" onclick="rejectAd(${idx})" title="Rejeitar">✕</button>
-            ` : ''}
-            <button class="icon-btn danger" onclick="deleteAd(${idx})" title="Deletar">🗑</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function approveAd(idx) {
-      const data = loadData();
-      data.ads[idx].status = 'approved';
-      saveData(data);
-      renderAdList();
-      renderSponsored();
-      showToast('✓ Anúncio aprovado!');
-    }
-
-    function rejectAd(idx) {
-      const data = loadData();
-      data.ads[idx].status = 'rejected';
-      saveData(data);
-      renderAdList();
-      renderSponsored();
-      showToast('✗ Anúncio rejeitado.');
-    }
-
-    function deleteAd(idx) {
-      if (confirm('Deletar este anúncio?')) {
-        const data = loadData();
-        data.ads.splice(idx, 1);
-        saveData(data);
-        renderAdList();
-        renderSponsored();
-        showToast('🗑 Deletado.');
-      }
+      list.innerHTML = ads.map(ad =>
+        '<div class="admin-row"><div class="admin-row-main"><div style="font-weight:700;margin-bottom:4px;">' +
+        esc(ad.title) + ' <span class="status-stamp status-' + esc(ad.status) + '">' +
+        (ad.status === 'pending' ? 'Pendente' : ad.status === 'approved' ? 'Aprovado' : 'Rejeitado') +
+        '</span></div><div style="font-size:13px;color:var(--ink-soft);margin-bottom:4px;"><strong>' +
+        esc(ad.advertiserName) + '</strong></div><div style="font-size:13px;color:var(--ink-soft);margin-bottom:4px;">Contato: ' +
+        esc(ad.contact) + '</div><div style="font-size:13px;color:var(--ink-soft);word-break:break-all;"><a href="' +
+        esc(ad.url) + '" target="_blank" rel="noopener noreferrer" style="color:var(--stamp);">Ver anúncio →</a></div>' +
+        (ad.note ? '<div style="font-size:13px;color:var(--ink-soft);margin-top:6px;">📝 ' + esc(ad.note) + '</div>' : '') +
+        '</div><div class="admin-row-actions">' +
+        (ad.status === 'pending' ? '<button class="icon-btn" type="button" data-ad-action="approved" data-ad-id="' + esc(ad.id) + '" title="Aprovar">✓</button><button class="icon-btn danger" type="button" data-ad-action="rejected" data-ad-id="' + esc(ad.id) + '" title="Rejeitar">✕</button>' : '') +
+        '<button class="icon-btn danger" type="button" data-ad-action="delete" data-ad-id="' + esc(ad.id) + '" title="Deletar">🗑</button></div></div>'
+      ).join('');
     }
 
     function renderProductList() {
-      const data = loadData();
-      const list = document.getElementById('admin-products-list');
-
-      if (data.products.length === 0) {
+      const list = $('admin-products-list');
+      if (!list) return;
+      const products = loadData().products;
+      if (!products.length) {
         list.innerHTML = '<div class="empty-state">📦 Nenhum produto adicionado.</div>';
         return;
       }
-
-      list.innerHTML = data.products.map((product, idx) => `
-        <div class="admin-row">
-          <div class="admin-row-main">
-            <div style="font-weight: 700; margin-bottom: 4px;">${product.title}</div>
-            ${product.image ? `<img src="${product.image}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">` : ''}
-            <div style="font-size: 13px; color: var(--ink-soft); word-break: break-all;"><a href="${product.url}" target="_blank" style="color: var(--stamp);">Ver no Mercado Livre →</a></div>
-          </div>
-          <div class="admin-row-actions">
-            <button class="icon-btn danger" onclick="deleteProduct(${idx})">🗑</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function deleteProduct(idx) {
-      if (confirm('Deletar este achado?')) {
-        const data = loadData();
-        data.products.splice(idx, 1);
-        saveData(data);
-        renderProductList();
-        renderProducts();
-        showToast('🗑 Deletado.');
-      }
+      list.innerHTML = products.map(product =>
+        '<div class="admin-row"><div class="admin-row-main"><div style="font-weight:700;margin-bottom:4px;">' +
+        esc(product.title) + (product.active === false ? ' <span class="status-stamp status-rejected">Inativo</span>' : '') + '</div>' +
+        (product.image ? '<img loading="lazy" src="' + esc(product.image) + '" style="width:60px;height:60px;object-fit:cover;border-radius:4px;margin-bottom:8px;" alt="">' : '') +
+        '<div style="font-size:13px;color:var(--ink-soft);word-break:break-all;"><a href="' + esc(product.url) +
+        '" target="_blank" rel="noopener noreferrer" style="color:var(--stamp);">Ver no Mercado Livre →</a></div></div>' +
+        '<div class="admin-row-actions"><button class="icon-btn danger" type="button" data-delete-product="' + esc(product.id) + '" title="Deletar">🗑</button></div></div>'
+      ).join('');
     }
 
     function loadSettings() {
-      const data = loadData();
-      document.getElementById('settings-instagram').value = data.settings.instagram || '';
-      document.getElementById('settings-contact').value = data.settings.contact || '';
-      document.getElementById('settings-price').value = data.settings.price || '29.90';
-      updateAdInfo();
+      const settings = loadData().settings;
+      if ($('settings-instagram')) $('settings-instagram').value = settings.instagram || '';
+      if ($('settings-contact')) $('settings-contact').value = settings.contact || '';
+      if ($('settings-price')) $('settings-price').value = settings.price || '29.90';
     }
 
     function updateAdInfo() {
-      const data = loadData();
-      document.getElementById('ad-price-display').textContent = 'R$ ' + (data.settings.price || '29,90');
-      document.getElementById('ad-contact-display').textContent = data.settings.contact || '—';
+      const settings = loadData().settings;
+      const price = settings.price || '29.90';
+      if ($('ad-price-display')) $('ad-price-display').textContent = money(price);
+      if ($('ad-contact-display')) $('ad-contact-display').textContent = settings.contact || '—';
     }
 
-    function showAdminPanel() {
-      document.getElementById('admin-login-view').hidden = true;
-      document.getElementById('admin-panel-view').hidden = false;
-      isAdminLoggedIn = true;
-      loadSettings();
-      renderProductList();
-      renderAdList();
-    }
-
-    function hideAdminPanel() {
-      document.getElementById('admin-panel-view').hidden = true;
-      isAdminLoggedIn = false;
-      document.getElementById('login-passcode').value = '';
-    }
-
-    // TAB SWITCHING
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const tabName = e.target.dataset.tab;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-panel').forEach(p => p.hidden = true);
-        e.target.classList.add('active');
-        document.querySelector(`[data-tab-panel="${tabName}"]`).hidden = false;
-      });
-    });
-
-    // ADMIN MODAL
-    document.getElementById('open-admin-btn').addEventListener('click', () => {
-      document.getElementById('admin-overlay').hidden = false;
-      document.getElementById('admin-login-view').hidden = false;
-    });
-
-    document.getElementById('close-admin-btn').addEventListener('click', () => {
-      document.getElementById('admin-overlay').hidden = true;
-      hideAdminPanel();
-    });
-
-    document.getElementById('admin-overlay').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('admin-overlay')) {
-        document.getElementById('admin-overlay').hidden = true;
-        hideAdminPanel();
-      }
-    });
-
-    // FORMS
-    document.getElementById('admin-login-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!validateForm('admin-login-form')) return;
-      const passcode = document.getElementById('login-passcode').value;
-      if (passcode === ADMIN_PASSWORD) {
-        showAdminPanel();
-        showToast('✓ Bem-vindo ao painel!');
-      } else {
-        showToast('❌ Senha incorreta!', true);
-        document.getElementById('login-passcode').value = '';
-      }
-    });
-
-    document.getElementById('add-product-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!validateForm('add-product-form')) return;
-
-      const url = document.getElementById('new-product-url').value;
-      const title = document.getElementById('new-product-title').value;
-      const image = currentProductImage;
-
-      const data = loadData();
-      data.products.push({ url, title, image });
-      saveData(data);
-      document.getElementById('add-product-form').reset();
-      document.getElementById('image-preview-new').hidden = true;
-      currentProductImage = null;
-      renderProductList();
-      renderProducts();
-      showToast('✓ Produto adicionado!');
-    });
-
-    document.getElementById('ad-request-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!validateForm('ad-request-form')) return;
-
-      const advertiserName = document.getElementById('ad-name').value;
-      const contact = document.getElementById('ad-contact').value;
-      const url = document.getElementById('ad-url').value;
-      const title = document.getElementById('ad-title').value;
-      const note = document.getElementById('ad-note').value;
-
-      const data = loadData();
-      data.ads.push({
-        advertiserName, contact, url, title, note,
-        status: 'pending', image: null,
-        createdAt: new Date().toISOString()
-      });
-      saveData(data);
-
-      document.getElementById('ad-request-form').hidden = true;
-      document.getElementById('ad-confirmation').hidden = false;
-      document.getElementById('ad-confirmation').innerHTML = `
-        <p style="margin-bottom: 12px; font-size: 16px;">✓ Pronto!</p>
-        <p style="font-size: 14px;">Sua solicitação foi enviada! Você receberá um WhatsApp confirmando em breve.</p>
-      `;
-
-      setTimeout(() => {
-        document.getElementById('ad-request-form').hidden = false;
-        document.getElementById('ad-confirmation').hidden = true;
-        document.getElementById('ad-request-form').reset();
-      }, 4000);
-    });
-
-    document.getElementById('settings-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const data = loadData();
-      data.settings = {
-        instagram: document.getElementById('settings-instagram').value,
-        contact: document.getElementById('settings-contact').value,
-        price: document.getElementById('settings-price').value
-      };
-      saveData(data);
-      updateAdInfo();
-      updateInstagramLink();
-      showToast('✓ Configurações salvas!');
-    });
-
-    document.getElementById('admin-logout-btn').addEventListener('click', () => {
-      document.getElementById('admin-overlay').hidden = true;
-      hideAdminPanel();
-      showToast('👋 Até logo!');
-    });
-
-    // INSTAGRAM
     function updateInstagramLink() {
       const data = loadData();
-      const igLink = data.settings.instagram || 'https://instagram.com';
-      document.getElementById('ig-follow-btn').href = igLink;
-      document.getElementById('ig-follow-btn-2').href = igLink;
+      const link = isValidUrl(data.settings.instagram) ? data.settings.instagram : 'https://instagram.com';
+      ['ig-follow-btn', 'ig-follow-btn-2'].forEach(id => { if ($(id)) $(id).href = link; });
     }
 
-    // INIT
-    document.addEventListener('DOMContentLoaded', () => {
+    async function migrateLegacyLocalDataOnce() {
+      let raw = null;
+      try { raw = window.localStorage.getItem(LEGACY_STORAGE_KEY); } catch (_) {}
+      if (!raw) return;
+      let legacy;
+      try { legacy = JSON.parse(raw); } catch (_) {
+        try { window.localStorage.removeItem(LEGACY_STORAGE_KEY); } catch (_) {}
+        return;
+      }
+      const marker = await db.from('settings').select('key').eq('key', 'legacy_local_data_migrated').maybeSingle();
+      if (marker.error) { console.warn('Migração antiga adiada:', marker.error); return; }
+      if (marker.data) {
+        try { window.localStorage.removeItem(LEGACY_STORAGE_KEY); } catch (_) {}
+        return;
+      }
+      const existingProductsResult = await db.from('products').select('affiliate_url,product_url');
+      if (existingProductsResult.error) { console.warn(existingProductsResult.error); return; }
+      const knownUrls = new Set();
+      (existingProductsResult.data || []).forEach(row => { if (row.affiliate_url) knownUrls.add(row.affiliate_url); if (row.product_url) knownUrls.add(row.product_url); });
+      for (const product of (Array.isArray(legacy.products) ? legacy.products : [])) {
+        const url = String(product.url || product.affiliate_url || product.product_url || '').trim();
+        const title = String(product.title || '').trim();
+        if (!url || !title || !isValidUrl(url) || knownUrls.has(url)) continue;
+        const image = await compressImageForStorage(product.image || product.image_url || null);
+        const inserted = await db.from('products').insert({
+          title: title, product_url: url, affiliate_url: url, image_url: image,
+          marketplace: 'mercado_livre', active: true, featured: false,
+          source: 'legacy-localstorage-migration', is_affiliate: true, auto_publish: false
+        });
+        if (inserted.error) { console.warn('Produto legado não migrado:', inserted.error); return; }
+        knownUrls.add(url);
+      }
+      const existingAdsResult = await db.from('ad_requests').select('title,url');
+      if (existingAdsResult.error) { console.warn(existingAdsResult.error); return; }
+      const knownAds = new Set((existingAdsResult.data || []).map(row => String(row.title || '') + '|' + String(row.url || '')));
+      for (const ad of (Array.isArray(legacy.ads) ? legacy.ads : [])) {
+        const title = String(ad.title || '').trim();
+        const url = String(ad.url || '').trim();
+        const key = title + '|' + url;
+        if (!title || !isValidUrl(url) || knownAds.has(key)) continue;
+        const inserted = await db.from('ad_requests').insert({
+          advertiser_name: String(ad.advertiserName || ad.advertiser_name || 'Anunciante'),
+          contact: String(ad.contact || ''), url: url, title: title,
+          note: String(ad.note || ''), status: ['pending','approved','rejected'].includes(ad.status) ? ad.status : 'pending',
+          image_url: null
+        });
+        if (inserted.error) { console.warn('Anúncio legado não migrado:', inserted.error); return; }
+        knownAds.add(key);
+      }
+      const oldSettings = legacy.settings || {};
+      for (const key of ['instagram', 'contact', 'price']) {
+        const value = String(oldSettings[key] == null ? '' : oldSettings[key]).trim();
+        const isDefault = (key === 'instagram' && value === 'https://instagram.com') || (key === 'contact' && value === '') || (key === 'price' && value === '29.90');
+        if (!value || isDefault) continue;
+        const saved = await db.from('settings').upsert({ key: key, value: value }, { onConflict: 'key' });
+        if (saved.error) { console.warn('Configuração antiga não migrada:', saved.error); return; }
+      }
+      const marked = await db.from('settings').upsert({ key: 'legacy_local_data_migrated', value: true }, { onConflict: 'key' });
+      if (marked.error) { console.warn('Marcador da migração não salvo:', marked.error); return; }
+      try { window.localStorage.removeItem(LEGACY_STORAGE_KEY); } catch (_) {}
+      toast('Dados salvos anteriormente neste navegador foram transferidos para o banco.');
+    }
+
+    async function refreshRemoteData(adminMode) {
+      try {
+        await loadRemoteData(adminMode);
+        return true;
+      } catch (error) {
+        console.error('Erro ao carregar dados do Supabase:', error);
+        toast('Não foi possível sincronizar com o banco. Tente novamente.', true);
+        return false;
+      }
+    }
+
+    async function loadRemoteData(adminMode) {
+      const productQuery = db.from('products').select('*').order('created_at', { ascending: false });
+      const adQuery = db.from('ad_requests').select('*').order('created_at', { ascending: false });
+      if (!adminMode) {
+        productQuery.eq('active', true);
+        adQuery.eq('status', 'approved');
+      }
+      const results = await Promise.all([
+        productQuery,
+        adQuery,
+        db.from('settings').select('key,value').in('key', ['instagram', 'contact', 'price'])
+      ]);
+      const productResult = results[0], adResult = results[1], settingsResult = results[2];
+      if (productResult.error) throw productResult.error;
+      if (adResult.error) throw adResult.error;
+      if (settingsResult.error) throw settingsResult.error;
+      const products = (productResult.data || []).map(row => ({
+        id: row.id, url: row.affiliate_url || row.product_url || '', title: row.title || '',
+        image: row.image_url || null, active: row.active !== false, price: row.price,
+        description: row.description || '', source: row.source || 'manual', createdAt: row.created_at
+      }));
+      products.sort((a, b) => {
+        if (a.source === 'legacy-default' && b.source === 'legacy-default') {
+          return a.title.localeCompare(b.title, 'pt-BR', { numeric: true });
+        }
+        if (a.source === 'legacy-default') return 1;
+        if (b.source === 'legacy-default') return -1;
+        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      });
+      const ads = (adResult.data || []).map(row => ({
+        id: row.id, advertiserName: row.advertiser_name || '', contact: row.contact || '',
+        url: row.url || '', title: row.title || '', note: row.note || '',
+        image: row.image_url || null, status: row.status || 'pending', createdAt: row.created_at
+      }));
+      const settings = Object.assign({}, DEFAULT_SETTINGS);
+      (settingsResult.data || []).forEach(row => {
+        settings[row.key] = typeof row.value === 'string' ? row.value : (row.value == null ? '' : String(row.value));
+      });
+      siteData = { products: products, ads: ads, settings: settings };
       renderProducts();
       renderSponsored();
       updateInstagramLink();
       updateAdInfo();
+      if (adminMode) {
+        loadSettings();
+        renderProductList();
+        renderAdList();
+      }
+      return siteData;
+    }
+
+    async function approveAd(id) { return updateAdStatus(id, 'approved'); }
+    async function rejectAd(id) { return updateAdStatus(id, 'rejected'); }
+    async function updateAdStatus(id, status) {
+      if (!(await requireAdmin())) return;
+      const result = await db.from('ad_requests').update({ status: status }).eq('id', id);
+      if (result.error) { toast('Não foi possível atualizar o anúncio: ' + result.error.message, true); return; }
+      await refreshRemoteData(true);
+      toast(status === 'approved' ? '✓ Anúncio aprovado!' : 'Solicitação rejeitada.');
+    }
+
+    async function deleteAd(id) {
+      if (!(await requireAdmin()) || !confirm('Deletar este anúncio?')) return;
+      const result = await db.from('ad_requests').delete().eq('id', id);
+      if (result.error) { toast('Não foi possível excluir o anúncio: ' + result.error.message, true); return; }
+      await refreshRemoteData(true);
+      toast('🗑 Anúncio excluído.');
+    }
+
+    async function deleteProduct(id) {
+      if (!(await requireAdmin()) || !confirm('Deletar este achado?')) return;
+      const result = await db.from('products').delete().eq('id', id);
+      if (result.error) { toast('Não foi possível excluir o produto: ' + result.error.message, true); return; }
+      await refreshRemoteData(true);
+      toast('🗑 Produto excluído.');
+    }
+
+    async function showAdminPanel() {
+      if (!(await isAdmin())) { isAdminLoggedIn = false; toast('Esta conta não tem permissão de administrador.', true); return; }
+      isAdminLoggedIn = true;
+      $('admin-login-view').hidden = true;
+      $('admin-panel-view').hidden = false;
+      await migrateLegacyLocalDataOnce();
+      if (!(await refreshRemoteData(true))) return;
+      document.querySelectorAll('.tab-btn').forEach(button => button.classList.toggle('active', button.dataset.tab === 'products'));
+      document.querySelectorAll('.tab-panel').forEach(panel => { panel.hidden = panel.dataset.tabPanel !== 'products'; });
+    }
+
+    async function hideAdminPanel(signOut) {
+      $('admin-overlay').hidden = true;
+      $('admin-panel-view').hidden = true;
+      $('admin-login-view').hidden = false;
+      isAdminLoggedIn = false;
+      if ($('login-passcode')) $('login-passcode').value = '';
+      if ($('login-email')) $('login-email').value = '';
+      if (signOut !== false) {
+        const result = await db.auth.signOut();
+        if (result.error) console.warn('Não foi possível encerrar a sessão:', result.error);
+        await refreshRemoteData(false);
+      }
+    }
+
+    function updateTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(button => button.classList.toggle('active', button.dataset.tab === tabName));
+      document.querySelectorAll('.tab-panel').forEach(panel => { panel.hidden = panel.dataset.tabPanel !== tabName; });
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        isAdminLoggedIn = await isAdmin();
+        await loadRemoteData(isAdminLoggedIn);
+      } catch (error) {
+        console.error('Erro ao iniciar o site:', error);
+        toast('Erro ao carregar os dados do site. Verifique a conexão.', true);
+        siteData = { products: [], ads: [], settings: Object.assign({}, DEFAULT_SETTINGS) };
+        renderProducts(); renderSponsored(); updateInstagramLink(); updateAdInfo();
+      }
+
+      if ($('open-admin-btn')) $('open-admin-btn').addEventListener('click', async () => {
+        $('admin-overlay').hidden = false;
+        if (await isAdmin()) await showAdminPanel();
+        else { $('admin-login-view').hidden = false; $('admin-panel-view').hidden = true; }
+      });
+      if ($('close-admin-btn')) $('close-admin-btn').addEventListener('click', () => { hideAdminPanel(true); });
+      if ($('admin-overlay')) $('admin-overlay').addEventListener('click', event => {
+        if (event.target === $('admin-overlay')) hideAdminPanel(true);
+      });
+      if ($('admin-logout-btn')) $('admin-logout-btn').addEventListener('click', async () => {
+        await hideAdminPanel(true);
+        toast('👋 Sessão encerrada.');
+      });
+
+      document.querySelectorAll('.tab-btn').forEach(button => button.addEventListener('click', () => updateTab(button.dataset.tab)));
+
+      if ($('admin-login-form')) $('admin-login-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!validateForm('admin-login-form')) return;
+        const email = $('login-email').value.trim();
+        const password = $('login-passcode').value;
+        try {
+          const result = await db.auth.signInWithPassword({ email: email, password: password });
+          if (result.error) { toast('Falha no login: confira e-mail e senha.', true); return; }
+          if (!(await isAdmin())) {
+            await db.auth.signOut();
+            toast('Esta conta não tem permissão de administrador.', true);
+            return;
+          }
+          await showAdminPanel();
+          toast('✓ Bem-vindo ao painel!');
+        } catch (error) {
+          console.error(error);
+          toast('Não foi possível entrar no painel. Tente novamente.', true);
+        }
+      });
+
+      if ($('add-product-form')) $('add-product-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!validateForm('add-product-form') || !(await requireAdmin())) return;
+        const url = $('new-product-url').value.trim();
+        const title = $('new-product-title').value.trim();
+        const image = currentProductImage ? await compressImageForStorage(currentProductImage) : null;
+        if (currentProductImage && !image) { toast('Não foi possível preparar a imagem. Escolha outra foto.', true); return; }
+        const result = await db.from('products').insert({
+          title: title, product_url: url, affiliate_url: url, image_url: image,
+          description: '', marketplace: 'mercado_livre', active: true, featured: false,
+          source: 'manual', is_affiliate: true, auto_publish: false
+        });
+        if (result.error) { toast('Não foi possível salvar o produto: ' + result.error.message, true); return; }
+        $('add-product-form').reset();
+        if ($('image-preview-new')) { $('image-preview-new').hidden = true; $('image-preview-new').removeAttribute('src'); }
+        currentProductImage = null;
+        await refreshRemoteData(true);
+        toast('✓ Produto salvo no banco!');
+      });
+
+      if ($('ad-request-form')) $('ad-request-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!validateForm('ad-request-form')) return;
+        const row = {
+          advertiser_name: $('ad-name').value.trim(), contact: $('ad-contact').value.trim(),
+          url: $('ad-url').value.trim(), title: $('ad-title').value.trim(), note: $('ad-note').value.trim(),
+          status: 'pending'
+        };
+        const result = await db.from('ad_requests').insert(row);
+        if (result.error) { toast('Não foi possível enviar a solicitação. Tente novamente.', true); console.error(result.error); return; }
+        $('ad-request-form').hidden = true;
+        $('ad-confirmation').hidden = false;
+        $('ad-confirmation').innerHTML = '<p style="margin-bottom:12px;font-size:16px;">✓ Solicitação enviada!</p><p style="font-size:14px;">Ela ficará aguardando análise antes de aparecer no site.</p>';
+        setTimeout(() => { $('ad-request-form').hidden = false; $('ad-confirmation').hidden = true; $('ad-request-form').reset(); }, 4500);
+      });
+
+      if ($('settings-form')) $('settings-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!(await requireAdmin())) return;
+        const values = {
+          instagram: $('settings-instagram').value.trim() || 'https://instagram.com',
+          contact: $('settings-contact').value.trim(),
+          price: $('settings-price').value.trim() || '29.90'
+        };
+        for (const key of Object.keys(values)) {
+          const result = await db.from('settings').upsert({ key: key, value: values[key] }, { onConflict: 'key' });
+          if (result.error) { toast('Erro ao salvar configurações: ' + result.error.message, true); console.error(result.error); return; }
+        }
+        await refreshRemoteData(true);
+        toast('✓ Configurações salvas no banco!');
+      });
+
+      if ($('admin-products-list')) $('admin-products-list').addEventListener('click', async event => {
+        const button = event.target.closest('[data-delete-product]');
+        if (button) await deleteProduct(button.dataset.deleteProduct);
+      });
+      if ($('admin-ads-list')) $('admin-ads-list').addEventListener('click', async event => {
+        const button = event.target.closest('[data-ad-action]');
+        if (!button) return;
+        if (button.dataset.adAction === 'delete') await deleteAd(button.dataset.adId);
+        else await updateAdStatus(button.dataset.adId, button.dataset.adAction);
+      });
     });
   </script>
 
