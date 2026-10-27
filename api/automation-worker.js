@@ -10,11 +10,22 @@ export default async function handler(req, res) {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return res.status(500).json({ ok: false, error: 'Missing server configuration' });
   const headers = { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' };
+  const jobs = [];
   try {
-    const response = await fetch(url + '/functions/v1/automation-worker', { method: 'POST', headers, body: '{}' });
-    const text = await response.text();
-    return res.status(response.ok ? 200 : 502).json({ ok: response.ok, stage: 'worker', status: response.status, result: text, publishing_enabled: false });
+    for (let i = 0; i < 20; i++) {
+      const response = await fetch(url + '/functions/v1/automation-worker', { method: 'POST', headers, body: '{}' });
+      const raw = await response.text();
+      let result;
+      try { result = JSON.parse(raw); } catch { result = { raw }; }
+      if (!response.ok) {
+        return res.status(502).json({ ok: false, stage: 'worker', status: response.status, result, processed_jobs: jobs.length });
+      }
+      if (result.claimed === false || result.claimed === undefined && result.job_id === undefined) break;
+      jobs.push(result);
+      if (result.ok === false) break;
+    }
+    return res.status(200).json({ ok: true, stage: 'worker', processed_jobs: jobs.length, jobs, publishing_enabled: false });
   } catch (error) {
-    return res.status(502).json({ ok: false, stage: 'worker', error: String(error) });
+    return res.status(502).json({ ok: false, stage: 'worker', error: String(error), processed_jobs: jobs.length });
   }
 }
