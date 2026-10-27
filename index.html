@@ -2022,8 +2022,16 @@
       const products = (productResult.data || []).map(row => ({
         id: row.id, url: row.affiliate_url || row.product_url || '', title: row.title || '',
         image: row.image_url || null, active: row.active !== false, price: row.price,
-        description: row.description || '', source: row.source || 'manual'
+        description: row.description || '', source: row.source || 'manual', createdAt: row.created_at
       }));
+      products.sort((a, b) => {
+        if (a.source === 'legacy-default' && b.source === 'legacy-default') {
+          return a.title.localeCompare(b.title, 'pt-BR', { numeric: true });
+        }
+        if (a.source === 'legacy-default') return 1;
+        if (b.source === 'legacy-default') return -1;
+        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      });
       const ads = (adResult.data || []).map(row => ({
         id: row.id, advertiserName: row.advertiser_name || '', contact: row.contact || '',
         url: row.url || '', title: row.title || '', note: row.note || '',
