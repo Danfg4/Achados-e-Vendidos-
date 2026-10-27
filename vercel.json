@@ -3,10 +3,6 @@
     {
       "path": "/api/enqueue",
       "schedule": "0 3 * * *"
-    },
-    {
-      "path": "/api/automation-worker",
-      "schedule": "15 3 * * *"
     }
   ]
 }
