@@ -1,29 +1,17 @@
 export default async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'POST') {
-    return res.status(405).json({
-      ok: false,
-      error: 'Method not allowed'
-    });
+    return res.status(405).json({ ok: false, error: 'Method not allowed' });
   }
 
   const secret = process.env.CRON_SECRET;
-  const auth = req.headers.authorization || '';
-
-  if (!secret || auth !== `Bearer ${secret}`) {
-    return res.status(401).json({
-      ok: false,
-      error: 'Unauthorized'
-    });
+  if (!secret || req.headers.authorization !== `Bearer ${secret}`) {
+    return res.status(401).json({ ok: false, error: 'Unauthorized' });
   }
 
   const supabaseUrl = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
   if (!supabaseUrl || !serviceKey) {
-    return res.status(500).json({
-      ok: false,
-      error: 'Missing server configuration'
-    });
+    return res.status(500).json({ ok: false, error: 'Missing server configuration' });
   }
 
   const headers = {
@@ -32,35 +20,58 @@ export default async function handler(req, res) {
     'Content-Type': 'application/json'
   };
 
+  const callFunction = async (slug) => {
+    const response = await fetch(`${supabaseUrl}/functions/v1/${slug}`, {
+      method: 'POST',
+      headers,
+      body: '{}'
+    });
+    const raw = await response.text();
+    let data;
+    try { data = JSON.parse(raw); } catch { data = { raw }; }
+    if (!response.ok) {
+      const error = new Error(`${slug} returned HTTP ${response.status}`);
+      error.status = response.status;
+      error.details = data;
+      throw error;
+    }
+    return data;
+  };
+
   try {
-    const enqueue = await fetch(
-      `${supabaseUrl}/functions/v1/enqueue-affiliate-jobs`,
-      {
-        method: 'POST',
-        headers,
-        body: '{}'
+    const enqueueResult = await callFunction('enqueue-affiliate-jobs');
+    const processed = [];
+
+    // Run a bounded batch to keep the Vercel function within its execution budget.
+    for (let i = 0; i < 20; i++) {
+      const result = await callFunction('automation-worker');
+      if (result.claimed === false) break;
+      if (result.claimed !== true) {
+        throw new Error('automation-worker returned an unexpected response');
       }
-    );
-
-    const enqueueText = await enqueue.text();
-
-    if (!enqueue.ok) {
-      return res.status(502).json({
-        ok: false,
-        stage: 'enqueue',
-        error: enqueueText
+      processed.push({
+        job_id: result.job_id ?? null,
+        action: result.action ?? result.next ?? result.status ?? 'processed',
+        ok: result.ok !== false
       });
+      if (result.ok === false) break;
     }
 
     return res.status(200).json({
       ok: true,
-      stage: 'enqueue',
-      result: enqueueText
+      stage: 'enqueue_and_process',
+      enqueue: enqueueResult,
+      processed_jobs: processed.length,
+      jobs: processed,
+      publishing_enabled: false
     });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(502).json({
       ok: false,
-      error: error instanceof Error ? error.message : String(error)
+      stage: 'automation',
+      error: error instanceof Error ? error.message : String(error),
+      status: error && typeof error === 'object' && 'status' in error ? error.status : undefined,
+      details: error && typeof error === 'object' && 'details' in error ? error.details : undefined
     });
   }
 }
