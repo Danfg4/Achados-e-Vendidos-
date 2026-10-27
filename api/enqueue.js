@@ -57,13 +57,15 @@ export default async function handler(req, res) {
       if (result.ok === false) break;
     }
 
+    const publishing = await callFunction('publish-affiliate-posts');
     return res.status(200).json({
       ok: true,
-      stage: 'enqueue_and_process',
+      stage: 'enqueue_process_and_publish',
       enqueue: enqueueResult,
       processed_jobs: processed.length,
       jobs: processed,
-      publishing_enabled: false
+      publishing,
+      publishing_enabled: publishing.publishing_enabled === true
     });
   } catch (error) {
     return res.status(502).json({
