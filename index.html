@@ -186,7 +186,7 @@
     <div class="wrap">
       <span class="hero-badge">🔥 Ofertas incríveis</span>
       <h1>Achados &amp; Vendidos</h1>
-      <p>Produtos com os melhores preços do Mercado Livre.</p>
+      <p>Produtos com ofertas e oportunidades de compra em diferentes lojas.</p>
       <div class="hero-ctas">
         <a href="#achados" class="btn btn-primary">Ver achados</a>
         <a id="ig-follow-btn-2" href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Seguir no Instagram →</a>
@@ -200,7 +200,7 @@
         <h2>Achados da semana</h2>
         <span class="count-badge" id="product-count">— achados</span>
       </div>
-      <p class="section-sub">Clique em qualquer produto pra ver no Mercado Livre.</p>
+      <p class="section-sub">Clique em qualquer produto para conferir a oferta na loja.</p>
       <div class="grid" id="products-grid">
         <p style="color:var(--ink-faint); grid-column:1/-1;">Carregando achados…</p>
       </div>
@@ -246,8 +246,8 @@
             </div>
           </div>
           <div class="field" data-field="url">
-            <label for="ad-url">🔗 Link do produto (Mercado Livre)</label>
-            <input id="ad-url" type="text" placeholder="https://meli.la/ABC123">
+            <label for="ad-url">🔗 Link do produto</label>
+            <input id="ad-url" type="text" placeholder="https://loja.com/produto">
             <span class="field-error">Link inválido! Começa com https://</span>
           </div>
           <div class="field" data-field="title">
@@ -307,14 +307,14 @@
 
         <div class="tab-panel" data-tab-panel="products">
           <div class="help-box">
-            <strong>💡 Dica:</strong> Cole o link do Mercado Livre, dê um nome e escolha uma foto. Pronto!
+            <strong>💡 Dica:</strong> Cole o link da oferta, dê um nome e escolha uma foto. Pronto!
           </div>
 
           <form id="add-product-form" novalidate style="background: rgba(47,107,79,0.05); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
             <h4 style="margin-bottom: 14px;">➕ Adicionar novo produto</h4>
             <div class="field" data-field="url">
-              <label for="new-product-url">🔗 Link do Mercado Livre</label>
-              <input id="new-product-url" type="text" placeholder="https://meli.la/...">
+              <label for="new-product-url">🔗 Link da oferta</label>
+              <input id="new-product-url" type="text" placeholder="https://loja.com/produto">
               <span class="field-error">Link inválido!</span>
             </div>
             <div class="field" data-field="title">
@@ -566,7 +566,7 @@
         esc(product.title) + (product.active === false ? ' <span class="status-stamp status-rejected">Inativo</span>' : '') + '</div>' +
         (product.image ? '<img loading="lazy" src="' + esc(product.image) + '" style="width:60px;height:60px;object-fit:cover;border-radius:4px;margin-bottom:8px;" alt="">' : '') +
         '<div style="font-size:13px;color:var(--ink-soft);word-break:break-all;"><a href="' + esc(product.url) +
-        '" target="_blank" rel="noopener noreferrer" style="color:var(--stamp);">Ver no Mercado Livre →</a></div></div>' +
+        '" target="_blank" rel="noopener noreferrer" style="color:var(--stamp);">Ver oferta →</a></div></div>' +
         '<div class="admin-row-actions"><button class="icon-btn danger" type="button" data-delete-product="' + esc(product.id) + '" title="Deletar">🗑</button></div></div>'
       ).join('');
     }
@@ -617,7 +617,7 @@
         const image = await compressImageForStorage(product.image || product.image_url || null);
         const inserted = await db.from('products').insert({
           title: title, product_url: url, affiliate_url: url, image_url: image,
-          marketplace: 'mercado_livre', active: true, featured: false,
+          marketplace: 'geral', active: true, featured: false,
           source: 'legacy-localstorage-migration', is_affiliate: true, auto_publish: false
         });
         if (inserted.error) { console.warn('Produto legado não migrado:', inserted.error); return; }
@@ -829,7 +829,7 @@
         if (currentProductImage && !image) { toast('Não foi possível preparar a imagem. Escolha outra foto.', true); return; }
         const result = await db.from('products').insert({
           title: title, product_url: url, affiliate_url: url, image_url: image,
-          description: '', marketplace: 'mercado_livre', active: true, featured: false,
+          description: '', marketplace: 'geral', active: true, featured: false,
           source: 'manual', is_affiliate: true, auto_publish: false
         });
         if (result.error) { toast('Não foi possível salvar o produto: ' + result.error.message, true); return; }
